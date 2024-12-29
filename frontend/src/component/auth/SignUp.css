@@ -1,0 +1,118 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Container Styling */
+.sign-up-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.598);
+    
+}
+
+/* Header Styling */
+.sign-up-header h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #007bff;
+}
+
+/* Form Styling */
+.sign-up-form {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Input Container */
+.input-container {
+    margin-bottom: 15px;
+}
+
+.input-container label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+.input-container input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.input-container input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Button Styling */
+.button-container button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.button-container button:hover {
+    background-color: #0056b3;
+}
+
+.button-container button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Success and Error Messages */
+.success {
+    color: #28a745;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.error {
+    color: #ff4d4f;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+/* Already Registered Section */
+.already-registered {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+.already-registered a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.already-registered a:hover {
+    text-decoration: underline;
+}

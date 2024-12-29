@@ -1,0 +1,33 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+djangorestframework = "*"
+drf-nested-routers = "*"
+django-filter = "*"
+djoser = "*"
+djangorestframework-simplejwt = "*"
+pillow = "*"
+django-cors-headers = "*"
+django-templated-mail = "*"
+celery = "*"
+redis = "*"
+mysqlclient = "*"
+razorpay = "*"
+locust = "*"
+payu = "*"
+django-paypal = "*"
+django = "*"
+paypalrestsdk = "*"
+flower = "*"
+
+[dev-packages]
+pytest = "*"
+pytest-django = "*"
+pytest-watch = "*"
+model-bakery = "*"
+
+[requires]
+python_version = "*"

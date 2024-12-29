@@ -1,0 +1,24 @@
+djangorestframework
+drf-nested-routers
+django-filter
+djoser
+djangorestframework-simplejwt
+pillow
+django-cors-headers
+django-templated-mail
+celery
+redis
+mysqlclient
+flower
+razorpay
+locust
+payu
+django-paypal
+django
+paypalrestsdk
+
+# Development dependencies
+pytest
+pytest-django
+pytest-watch
+model-bakery

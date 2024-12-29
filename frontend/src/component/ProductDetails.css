@@ -1,0 +1,99 @@
+/* Container for the entire product details section */
+.product-details-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    margin: 20px;
+    flex-wrap: wrap; /* To handle smaller screens */
+  }
+  
+  /* Container for the product images */
+  .product-images {
+    flex: 2; /* Makes the image container bigger */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Main image on top */
+  .large-image {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .large-image img {
+    width: 100%;
+    max-width: 600px; /* Adjust the size of the large image */
+    height: auto;
+    object-fit: cover;
+  }
+  
+  /* Small images below the main image */
+  .small-images {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+  
+  .small-images img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    cursor: pointer;
+  }
+  
+  /* Container for the product details */
+  .product-info {
+    flex: 1; /* Makes the details container smaller */
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  /* Style for buttons */
+  .product-buttons {
+    display: flex;
+    gap: 15px;
+  }
+  
+  .product-buttons button {
+    padding: 10px 20px;
+    background-color: #ff7f50;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+  }
+  
+  .product-buttons button:hover {
+    background-color: #ff6347;
+  }
+  
+  /* Container for reviews */
+  .product-reviews {
+    margin-top: 40px;
+    padding: 20px;
+    border-top: 1px solid #ddd;
+    width: 100%;
+  }
+  
+  .product-reviews h2 {
+    margin-bottom: 20px;
+  }
+  
+  .product-reviews ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .product-reviews li {
+    margin-bottom: 10px;
+  }
+  
+  .product-reviews p {
+    margin: 5px 0;
+  }
+  

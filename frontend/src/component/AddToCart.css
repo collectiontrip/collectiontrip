@@ -1,0 +1,15 @@
+.add-to-cart {
+    background-color: #008080; /* Deep Teal */
+    color: white; /* Text color for contrast */
+    padding: 10px 20px; /* Button padding */
+    border: none; /* Remove default border */
+    border-radius: 5px; /* Smooth corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 16px; /* Adjust font size */
+    transition: background-color 0.3s ease; /* Smooth hover effect */
+  }
+  
+  .add-to-cart:hover {
+    background-color: #006666; /* Darker teal for hover */
+  }
+  

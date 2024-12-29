@@ -1,0 +1,125 @@
+/* Styling for the SignIn component */
+.sign-in-container {
+    width: 100%;
+    max-width: 420px; /* Slightly larger container */
+    height: auto;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 12px; /* More rounded corners */
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2); /* Larger shadow for a floating effect */
+    font-family: 'Roboto', sans-serif; /* Modern font */
+}
+
+/* Header style */
+.sign-in-header {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 30px;
+    color: #333;
+    font-weight: 600;
+}
+
+/* Form container */
+.sign-in-form {
+    display: flex;
+    flex-direction: column;
+    gap: 30px; /* Increased gap for more space between elements */
+}
+
+/* Container for individual input fields */
+.input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Adds space between label and input */
+}
+
+/* Input label styling */
+.input-container label {
+    font-size: 14px;
+    color: #777;
+    font-weight: 500;
+}
+
+/* Input field styling */
+.input-container input {
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.3s ease-in-out;
+    background-color: #f9f9f9; /* Subtle background */
+    color: #333; /* Dark text for visibility */
+}
+
+.input-container input:focus {
+    border-color: #007bff;
+    background-color: #ffffff; /* Bright background on focus */
+}
+
+/* Button container styling */
+.button-container {
+    display: flex;
+    justify-content: center;
+}
+
+/* Submit button styling */
+.button-container button {
+    padding: 12px;
+    font-size: 18px;
+    background: linear-gradient(145deg, #007bff, #0056b3); /* Gradient background */
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.button-container button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.button-container button:hover:enabled {
+    background: linear-gradient(145deg, #0056b3, #007bff); /* Reverse gradient on hover */
+    transform: scale(1.05); /* Slight scaling effect */
+}
+
+/* Error message styling */
+.error {
+    color: #e74c3c;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 10px;
+}
+
+/* Success message styling */
+.success {
+    color: #2ecc71; /* Green color for success */
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .sign-in-container {
+        width: 90%;
+        padding: 20px;
+    }
+
+    .sign-in-header {
+        font-size: 24px;
+    }
+
+    .button-container button {
+        font-size: 16px;
+        padding: 10px;
+    }
+
+    .input-container input {
+        font-size: 14px;
+    }
+}
