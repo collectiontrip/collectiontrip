@@ -1,21 +1,20 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom'; // Importing useNavigate and Link
-import './SignIn.css'; // Importing the CSS file
+import axiosInstance from './AxiosInstance'; // Importing AxiosInstance
+import { useNavigate, Link } from 'react-router-dom'; 
+import './SignIn.css'; 
 
 const SignIn = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [successMessage, setSuccessMessage] = useState(''); // Added success message state
+    const [successMessage, setSuccessMessage] = useState('');
 
-    const navigate = useNavigate(); // Hook for navigation
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Basic validation
         if (!username || !password) {
             setError('Please fill in both username and password.');
             return;
@@ -23,32 +22,28 @@ const SignIn = () => {
 
         setLoading(true);
         setError(null);
-        setSuccessMessage(''); // Reset success message on every submit
+        setSuccessMessage('');
 
         try {
-            const response = await axios.post('http://127.0.0.1:8000/auth/jwt/create', {
+            const response = await axiosInstance.post('auth/jwt/create', {
                 username,
                 password,
             });
 
-            // Check if the response contains tokens before saving them
             if (response.data.access && response.data.refresh) {
-                // Save token to localStorage if login is successful
                 localStorage.setItem('token', response.data.access);
-                localStorage.setItem('refreshToken', response.data.refresh); // Store the JWT token
+                localStorage.setItem('refreshToken', response.data.refresh);
 
-                setSuccessMessage('Logged in successfully!'); // Set the success message
+                setSuccessMessage('Logged in successfully!');
                 console.log("Logged in successfully!", response.data);
 
-                // Redirect the user to the desired URL after a short delay to show success message
                 setTimeout(() => {
-                    navigate('/product'); // Redirect to the provided URL
-                }, 1500); // Redirect after 1.5 seconds
+                    navigate('/product');
+                }, 1500);
             } else {
                 setError('Failed to retrieve tokens.');
             }
         } catch (err) {
-            // Error handling to display a meaningful message
             setError(err.response?.data?.detail || 'Invalid credentials or an error occurred');
             console.error('Login failed:', err);
         } finally {
@@ -92,13 +87,9 @@ const SignIn = () => {
                 </div>
             </form>
 
-            {/* Show success message */}
             {successMessage && <p className="success">{successMessage}</p>}
-
-            {/* Show error message */}
             {error && <p className="error">{error}</p>}
 
-            {/* Sign Up Link */}
             <div className="sign-up-link">
                 <p>
                     Not a user?{' '}

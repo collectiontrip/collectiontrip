@@ -1,21 +1,18 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import "./ProductList.css";
 import AddToCart from './AddToCart';
 
-// ImageSlider component to display images with next and previous buttons
 const ImageSlider = ({ images, onClose }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
 
     const nextImage = () => {
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length); // Loop to the first image
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length); 
     };
 
     const previousImage = () => {
-        setCurrentIndex(
-            (prevIndex) => (prevIndex - 1 + images.length) % images.length // Loop to the last image
-        );
+        setCurrentIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
     };
 
     return (
@@ -37,7 +34,11 @@ const ProductList = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
-    const [selectedImage, setSelectedImage] = useState(null); // For full-screen image
+    const [selectedImage, setSelectedImage] = useState(null); 
+    const [searchTerm, setSearchTerm] = useState(""); 
+    const [filteredProducts, setFilteredProducts] = useState([]);
+    const navigate = useNavigate();
+    const location = useLocation();
 
     // Fetch products on load
     useEffect(() => {
@@ -48,8 +49,10 @@ const ProductList = () => {
 
                 if (data && Array.isArray(data.results)) {
                     setProducts(data.results);
+                    setFilteredProducts(data.results); // Set full list initially
                 } else {
                     setProducts([]);
+                    setFilteredProducts([]);
                 }
 
                 setLoading(false);
@@ -64,22 +67,48 @@ const ProductList = () => {
         fetchProducts();
     }, []);
 
+    // Handle search
+    const handleSearchChange = (e) => {
+        setSearchTerm(e.target.value);
+    };
+
+    const handleSearch = () => {
+        const filtered = products.filter(product =>
+            product.title.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        setFilteredProducts(filtered);
+        // Update URL with the search term
+        navigate(`?search=${searchTerm}`);
+
+    };
+
+    // Update the search term when URL changes (for deep linking)
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const searchQuery = params.get("search") || "";
+        setSearchTerm(searchQuery);
+        if (searchQuery) {
+            const filtered = products.filter(product =>
+                product.title.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+            setFilteredProducts(filtered);
+        }
+    }, [location.search, products]);
+
     const handleAddToCart = (product) => {
         console.log(`Added to cart: ${product.title}`);
-        // You can implement the actual "Add to Cart" functionality here
     };
 
     const handleBuyNow = (product) => {
         console.log(`Buy Now: ${product.title}`);
-        // You can implement the actual "Buy Now" functionality here
     };
 
     const openFullScreenImage = (image) => {
-        setSelectedImage(image); // Set the selected image to be shown in full-screen
+        setSelectedImage(image); 
     };
 
     const closeFullScreenImage = () => {
-        setSelectedImage(null); // Close the full-screen view
+        setSelectedImage(null);
     };
 
     if (loading) {
@@ -92,9 +121,21 @@ const ProductList = () => {
 
     return (
         <div className="product-list-parent-container">
+            {/* Search Container */}
+            <div className="search-container">
+                <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                    placeholder="Search products..."
+                />
+                <button onClick={handleSearch}>Search</button>
+            </div>
+
+            {/* Product List Container */}
             <div className="product-list-container">
-                {products.length > 0 ? (
-                    products.map((product) => (
+                {filteredProducts.length > 0 ? (
+                    filteredProducts.map((product) => (
                         <div className="product-item" key={product.id}>
                             <div className="product-image">
                                 {product.images && product.images.length > 0 && (

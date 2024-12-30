@@ -12,8 +12,10 @@ router.register('products', views.ProductViewset, basename='products')
 router.register('collections', views.CollectionViewSet)
 router.register('carts', views.CartViewSet)
 router.register('customers', views.CustomerViewSet)
-router.register('orders', views.OrderViewSet, basename='orders')
-
+router.register(r'addresses', views.AddressViewSet, basename='address')
+router.register(r'orders', views.OrderViewSet, basename='order')
+router.register(r'order-items/(?P<order_id>\d+)', views.OrderItemViewSet, basename='order-item')  # Route for order items based on order_id
+router.register(r'create-order', views.CreateOrderViewSet, basename='create-order')
 
 
 products_router = routers.NestedDefaultRouter(router, 'products', lookup='product')

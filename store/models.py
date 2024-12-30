@@ -5,6 +5,9 @@ from django.core.validators import MinValueValidator, FileExtensionValidator
 from django.conf import settings
 from django.utils.text import slugify
 from .validators import validate_file_size
+from django.db import models, IntegrityError, transaction
+from django.core.exceptions import ValidationError
+from django.db.models import F
 
 
 class Promotion(models.Model):
@@ -85,8 +88,35 @@ class Customer(models.Model):
             ('view_history', 'Can view history'),
             
             ]
-    
 
+
+class Address(models.Model):
+    street = models.CharField(max_length=255)
+    city = models.CharField(max_length=255)
+    state = models.CharField(max_length=255, null=True, blank=True)  # Optional state field
+    postal_code = models.CharField(max_length=20, null=True, blank=True)  # Postal or ZIP code
+    country = models.CharField(max_length=255, null=True, blank=True)  # Optional country field
+    customer = models.ForeignKey('Customer', on_delete=models.CASCADE)
+
+    # Flags to differentiate billing and shipping addresses
+    is_billing_address = models.BooleanField(default=False)
+    is_shipping_address = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.street}, {self.city}, {self.state}, {self.country}, {self.postal_code}"
+
+    # Ensure only one billing address and shipping address per customer
+    def save(self, *args, **kwargs):
+        with transaction.atomic():
+            # Deactivate other billing addresses if this one is billing
+            if self.is_billing_address:
+                Address.objects.filter(customer=self.customer, is_billing_address=True).exclude(id=self.id).update(is_billing_address=False)
+            
+            # Deactivate other shipping addresses if this one is shipping
+            if self.is_shipping_address:
+                Address.objects.filter(customer=self.customer, is_shipping_address=True).exclude(id=self.id).update(is_shipping_address=False)
+
+            super().save(*args, **kwargs)
 
 
 class Order(models.Model):
@@ -102,11 +132,49 @@ class Order(models.Model):
     placed_at = models.DateTimeField(auto_now_add=True)
     payment_status = models.CharField(
         max_length=1, choices=PAYMENT_STATUS_CHOICES, default=PAYMENT_STATUS_PENDING)
-    customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
+    customer = models.ForeignKey('Customer', on_delete=models.PROTECT)
+
+    # Linking order to shipping and billing addresses
+    shipping_address = models.ForeignKey(
+        Address, on_delete=models.SET_NULL, null=True, related_name='shipping_orders')
+    billing_address = models.ForeignKey(
+        Address, on_delete=models.SET_NULL, null=True, related_name='billing_orders')
+
+    # Optional: Validate that shipping or billing address exists
+    def clean(self):
+        # Ensure that at least one address (shipping or billing) is provided
+        if not self.shipping_address and not self.billing_address:
+            raise ValidationError("At least one address (shipping or billing) must be provided.")
+        
+        # Ensure that both billing and shipping address cannot be the same
+        if self.shipping_address and self.billing_address and self.shipping_address == self.billing_address:
+            raise ValidationError("Shipping and billing addresses cannot be the same.")
+
+        # Check if the addresses belong to the same customer
+        if self.shipping_address and self.shipping_address.customer != self.customer:
+            raise ValidationError("Shipping address must belong to the same customer.")
+        
+        if self.billing_address and self.billing_address.customer != self.customer:
+            raise ValidationError("Billing address must belong to the same customer.")
+
+        # Optional: Ensure both addresses exist in the database
+        if self.shipping_address and not Address.objects.filter(id=self.shipping_address.id).exists():
+            raise ValidationError("Shipping address does not exist.")
+        
+        if self.billing_address and not Address.objects.filter(id=self.billing_address.id).exists():
+            raise ValidationError("Billing address does not exist.")
+
+        super().clean()
+
+    # Overriding save to ensure validation is called
+    def save(self, *args, **kwargs):
+        # Calling the clean method to validate
+        self.clean()
+        super().save(*args, **kwargs)
 
     class Meta:
         permissions = [
-            ('cancel_order', 'Can cancel order')
+            ('cancel_order', 'Can cancel order'),
         ]
 
 class OrderItem(models.Model):
@@ -116,11 +184,6 @@ class OrderItem(models.Model):
     unit_price = models.DecimalField(max_digits=6, decimal_places=2)
 
 
-class Address(models.Model):
-    street = models.CharField(max_length=255)
-    city = models.CharField(max_length=255)
-    customer = models.ForeignKey(
-        Customer, on_delete=models.CASCADE)
 
 
 class Cart(models.Model):

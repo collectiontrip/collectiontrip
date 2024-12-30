@@ -6,6 +6,7 @@ import Cart from './component/Cart';
 import NavBar from './component/NavBar'; 
 import SignUp from './component/auth/SignUp'; // Import SignUp component
 import SignIn from './component/auth/SignIn'; // Import SignIn component
+import AddressForm from './component/Address';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 function App() {
@@ -22,6 +23,13 @@ function App() {
           <Route path="/carts/:cartId" element={<Cart />} />
           <Route path="/user/signup" element={<SignUp />} /> {/* Route for SignUp */}
           <Route path="/user/signin" element={<SignIn />} /> {/* Route for SignIn */}
+          
+          {/* Route for AddressForm */}
+          <Route 
+            path="/user/address" 
+            element={<AddressForm onSubmitSuccess={() => console.log("Address submitted!")} />} 
+          />
+          
         </Routes>
 
         <h1>Hello</h1>

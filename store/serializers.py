@@ -1,7 +1,7 @@
 from decimal import Decimal
 from django.db import transaction
 from rest_framework import serializers
-from .models import Product, Collection, Cart, Review, CartItem, Customer, Order, OrderItem, ProductImage
+from .models import Product, Collection, Cart, Review, CartItem, Customer, Order, OrderItem, ProductImage, Address
 from .signals import order_created
 
 
@@ -144,57 +144,116 @@ class CustomerSerializer(serializers.ModelSerializer):
         fields = ['id', 'user_id', 'phone', 'birth_date', 'membership', 'image']
         
 
+
+
+class AddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Address
+        fields = [
+            'id',
+            'street',
+            'city',
+            'state',
+            'postal_code',
+            'country',
+            'is_billing_address',
+            'is_shipping_address',
+        ]
+
+
 class OrderItemSerializer(serializers.ModelSerializer):
-    product = SimpleProductSerializer()
+    product = serializers.StringRelatedField()  # Assuming product has a string representation
+
     class Meta:
         model = OrderItem
         fields = ['id', 'product', 'unit_price', 'quantity']
 
-        
+
 class OrderSerializer(serializers.ModelSerializer):
-    items = OrderItemSerializer(many=True)
+    items = OrderItemSerializer(many=True, read_only=True)
+    shipping_address = AddressSerializer(read_only=True)
+    billing_address = AddressSerializer(read_only=True)
+
     class Meta:
         model = Order
-        fields = ['id', 'customer', 'placed_at', 'payment_status', 'items']
+        fields = [
+            'id',
+            'customer',
+            'placed_at',
+            'payment_status',
+            'items',
+            'shipping_address',
+            'billing_address',
+        ]
 
+
+class CreateOrderSerializer(serializers.Serializer):
+    cart_id = serializers.UUIDField()
+    shipping_address = serializers.PrimaryKeyRelatedField(queryset=Address.objects.all(), required=False)
+    billing_address = serializers.PrimaryKeyRelatedField(queryset=Address.objects.all(), required=False)
+
+    def validate_cart_id(self, cart_id):
+        try:
+            cart = Cart.objects.get(pk=cart_id)
+        except Cart.DoesNotExist:
+            raise serializers.ValidationError('No cart with the given ID was found.')
+
+        if not CartItem.objects.filter(cart=cart).exists():
+            raise serializers.ValidationError('The cart is empty.')
+
+        return cart_id
+
+    def validate(self, data):
+        shipping_address = data.get('shipping_address')
+        billing_address = data.get('billing_address')
+        customer = self.context['user'].customer
+
+        if not shipping_address and not billing_address:
+            raise serializers.ValidationError(
+                "At least one address (shipping or billing) must be provided."
+            )
+
+        if shipping_address and billing_address and shipping_address == billing_address:
+            raise serializers.ValidationError(
+                "Shipping and billing addresses cannot be the same."
+            )
+
+        for address, address_type in [(shipping_address, "Shipping"), (billing_address, "Billing")]:
+            if address and address.customer != customer:
+                raise serializers.ValidationError(
+                    f"{address_type} address must belong to the same customer."
+                )
+
+        return data
+
+    def save(self, **kwargs):
+        cart_id = self.validated_data['cart_id']
+        customer = self.context['user'].customer
+
+        order = Order.objects.create(
+            customer=customer,
+            shipping_address=self.validated_data.get('shipping_address'),
+            billing_address=self.validated_data.get('billing_address'),
+        )
+
+        cart_items = CartItem.objects.filter(cart_id=cart_id)
+        order_items = [
+            OrderItem(
+                order=order,
+                product=item.product,
+                unit_price=item.product.price,
+                quantity=item.quantity,
+            )
+            for item in cart_items
+        ]
+        OrderItem.objects.bulk_create(order_items)
+
+        order_created.send_robust(sender=self.__class__, order=order)
+
+        Cart.objects.filter(pk=cart_id).delete()
+
+        return order
 class UpdateOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-        fields = ['payment_status']
-        
-        
-class CreateOrderSerializer(serializers.Serializer):
-    with transaction.atomic():
-        cart_id = serializers.UUIDField()
-        
-        def validate_cart_id(self, cart_id):
-            if not Cart.objects.filter(pk=cart_id).exists():
-                raise serializers.ValidationError('No cart with the given ID was found.')
-            if CartItem.objects.filter(cart_id=cart_id).count() == 0:
-                raise serializers.ValidationError('The cart is empty')
-            return cart_id
-        
-        def save(self, **kwargs):
-            
-            
-            customer = Customer.objects.get(user_id=self.context['user_id'])
-            order = Order.objects.create(customer=customer)
-            cart_id = self.validated_data['cart_id']
-            cart_items = CartItem.objects.select_related('product').filter(cart_id=cart_id)
-            
-            order_items = [
-                OrderItem(
-                    order=order,
-                    product=item.product,
-                    unit_price=item.product.price,
-                    quantity=item.quantity
-                ) for item in cart_items
-            ]
-            
-            OrderItem.objects.bulk_create(order_items)
-            
-            order_created.send_robust(self.__class__, order = order)
-            
-            Cart.objects.filter(pk=cart_id).delete()
-            
-            return order
+        fields = ['status', 'shipping_address', 'payment_status']

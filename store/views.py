@@ -18,7 +18,15 @@ from .pagination import DefaultPagination
 from .permissions import IsAdminOrReadOnly, FullDjangoModelPermissions, ViewCustomerHistoyPermission
 from django.http import JsonResponse
 
-
+from rest_framework import viewsets, mixins
+from rest_framework.permissions import IsAuthenticated
+from .models import Address, Order, OrderItem
+from .serializers import (
+    AddressSerializer,
+    OrderSerializer,
+    OrderItemSerializer,
+    CreateOrderSerializer,
+)
 
 
 
@@ -123,39 +131,40 @@ class CustomerViewSet(ModelViewSet):
         
         
         
-class OrderViewSet(ModelViewSet):
-    http_method_names = ['get', 'post',  'patch', 'delete', 'head', 'options']
-    
-    def get_permissions(self):
-        if self.request.method in ['PATCH', 'DELETE']:
-            return [IsAdminUser()]
-        return [IsAuthenticated()]
-    
-    def create(self, request, *args, **kwargs):
-        serializer = CreateOrderSerializer(
-            data=request.data,
-            context={'user_id': self.request.user.id}
-            )
-        serializer.is_valid(raise_exception=True)
-        order = serializer.save()
-        serializer = OrderSerializer(order)
-        return Response(serializer.data)
-    
-    def get_serializer_class(self):
-        if self.request.method == 'POST':
-            return CreateOrderSerializer
-        elif self.request.method == 'PATCH':
-            return UpdateOrderSerializer
-        return OrderSerializer
-    
-   
-    
-    def get_queryset(self):
-        user = self.request.user
-        if user.is_staff:
-            return Order.objects.all()
-        
-        customer_id = Customer.objects.only('id').get(user_id=user.id)
-        return Order.objects.filter(customer_id=customer_id)
-    
+class AddressViewSet(viewsets.ModelViewSet):
+    serializer_class = AddressSerializer
+    permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        return Address.objects.filter(customer=self.request.user.customer)
+
+    def perform_create(self, serializer):
+        serializer.save(customer=self.request.user.customer)
+
+
+class OrderViewSet(viewsets.ModelViewSet):
+    serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Order.objects.filter(customer=self.request.user.customer)
+
+
+class CreateOrderViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+    serializer_class = CreateOrderSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(customer=self.request.user.customer)
+
+
+class OrderItemViewSet(viewsets.ReadOnlyModelViewSet):  # Correct if only read operations (GET) are needed
+    serializer_class = OrderItemSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        order_id = self.kwargs.get('order_id')
+        return OrderItem.objects.filter(
+            order__id=order_id,
+            order__customer=self.request.user.customer
+        )
