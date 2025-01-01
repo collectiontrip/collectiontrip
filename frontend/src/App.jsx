@@ -4,32 +4,38 @@ import ProductList from './component/ProductList';
 import ProductDetails from './component/ProductDetails'; 
 import Cart from './component/Cart'; 
 import NavBar from './component/NavBar'; 
-import SignUp from './component/auth/SignUp'; // Import SignUp component
-import SignIn from './component/auth/SignIn'; // Import SignIn component
+import SignUp from './component/auth/SignUp'; 
+import SignIn from './component/auth/SignIn'; 
 import AddressForm from './component/Address';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 function App() {
-  const [count, setCount] = useState(0);
+  // State to track authentication status
+  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('accessToken'));
 
   return (
     <Router>
       <div>
-        <NavBar /> {/* Navbar component */}
+        {/* Pass isAuthenticated and setIsAuthenticated to NavBar */}
+        <NavBar isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} />
         
         <Routes>
           <Route path="/product" element={<ProductList />} />
           <Route path="/product/:productId" element={<ProductDetails />} />
           <Route path="/carts/:cartId" element={<Cart />} />
-          <Route path="/user/signup" element={<SignUp />} /> {/* Route for SignUp */}
-          <Route path="/user/signin" element={<SignIn />} /> {/* Route for SignIn */}
-          
-          {/* Route for AddressForm */}
+          <Route 
+            path="/user/signup" 
+            element={<SignUp />} 
+          />
+          {/* Pass setIsAuthenticated to SignIn to update authentication state */}
+          <Route 
+            path="/user/signin" 
+            element={<SignIn setIsAuthenticated={setIsAuthenticated} />} 
+          />
           <Route 
             path="/user/address" 
             element={<AddressForm onSubmitSuccess={() => console.log("Address submitted!")} />} 
           />
-          
         </Routes>
 
         <h1>Hello</h1>

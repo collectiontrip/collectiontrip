@@ -49,6 +49,10 @@ INSTALLED_APPS = [
     'core',
 ]
 
+from corsheaders.defaults import default_methods, default_headers
+CORS_ALLOW_METHODS = default_methods
+CORS_ALLOW_HEADERS = default_headers + ('Refresh-Token',)
+
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',

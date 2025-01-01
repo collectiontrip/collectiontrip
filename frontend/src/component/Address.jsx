@@ -16,17 +16,18 @@ const AddressForm = ({ addressId, onSubmitSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
+
   const navigate = useNavigate();
 
   useEffect(() => {
     if (addressId) {
       const fetchAddress = async () => {
         try {
-          const response = await AxiosInstance.get(`user/addresses/${addressId}/`);
+          const response = await AxiosInstance.get(`/addresses/${addressId}/`);
           setAddress(response.data);
         } catch (err) {
-          setError('Failed to fetch address data');
-          console.error(err);
+          setError('Failed to fetch address data.');
+          console.error('Error fetching address:', err);
         }
       };
       fetchAddress();
@@ -45,31 +46,21 @@ const AddressForm = ({ addressId, onSubmitSuccess }) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-
-    const token = localStorage.getItem('token');
-    if (!token) {
-      setError('You must be logged in to submit the address');
-      setLoading(false);
-      return;
-    }
+    setSuccessMessage(null);
 
     try {
       if (addressId) {
-        // If editing, PUT request
-        await AxiosInstance.put(`store/addresses/${addressId}/`, address);
+        await AxiosInstance.put(`/addresses/${addressId}/`, address);
       } else {
-        // If creating new, POST request
-        await AxiosInstance.post('store/addresses/', address);
+        await AxiosInstance.post('/addresses/', address);
       }
 
       setSuccessMessage('Address successfully saved!');
-      setTimeout(() => {
-        navigate('/product');
-      }, 2000);
-      onSubmitSuccess();
+      setTimeout(() => navigate('/product'), 2000);
+      if (onSubmitSuccess) onSubmitSuccess();
     } catch (err) {
-      setError('Failed to submit the address');
-      console.error(err);
+      setError('Failed to save address.');
+      console.error('Error saving address:', err);
     } finally {
       setLoading(false);
     }
@@ -79,7 +70,7 @@ const AddressForm = ({ addressId, onSubmitSuccess }) => {
     <div className="address-form-container">
       <h2>{addressId ? 'Edit Address' : 'Add Address'}</h2>
       {error && <p className="error">{error}</p>}
-
+      {successMessage && <p className="success">{successMessage}</p>}
       <form onSubmit={handleSubmit} className="address-form">
         <div className="input-container">
           <label htmlFor="street">Street:</label>
@@ -92,7 +83,6 @@ const AddressForm = ({ addressId, onSubmitSuccess }) => {
             required
           />
         </div>
-
         <div className="input-container">
           <label htmlFor="city">City:</label>
           <input
@@ -104,7 +94,6 @@ const AddressForm = ({ addressId, onSubmitSuccess }) => {
             required
           />
         </div>
-
         <div className="input-container">
           <label htmlFor="state">State:</label>
           <input
@@ -116,7 +105,6 @@ const AddressForm = ({ addressId, onSubmitSuccess }) => {
             required
           />
         </div>
-
         <div className="input-container">
           <label htmlFor="postal_code">Postal Code:</label>
           <input
@@ -128,7 +116,6 @@ const AddressForm = ({ addressId, onSubmitSuccess }) => {
             required
           />
         </div>
-
         <div className="input-container">
           <label htmlFor="country">Country:</label>
           <input
@@ -140,7 +127,6 @@ const AddressForm = ({ addressId, onSubmitSuccess }) => {
             required
           />
         </div>
-
         <div className="checkbox-container">
           <label>
             <input
@@ -161,19 +147,12 @@ const AddressForm = ({ addressId, onSubmitSuccess }) => {
             Shipping Address
           </label>
         </div>
-
         <div className="button-container">
           <button type="submit" disabled={loading}>
             {loading ? 'Saving...' : 'Save Address'}
           </button>
         </div>
       </form>
-
-      {successMessage && (
-        <div className="success-message">
-          <p>{successMessage}</p>
-        </div>
-      )}
     </div>
   );
 };

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import axiosInstance from './AxiosInstance'; // Importing AxiosInstance
+import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom'; 
 import './SignIn.css'; 
 
-const SignIn = () => {
+const SignIn = ({ setIsAuthenticated }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
@@ -25,17 +25,18 @@ const SignIn = () => {
         setSuccessMessage('');
 
         try {
-            const response = await axiosInstance.post('auth/jwt/create', {
+            const response = await axios.post('http://127.0.0.1:8000/auth/jwt/create', {
                 username,
                 password,
             });
 
             if (response.data.access && response.data.refresh) {
-                localStorage.setItem('token', response.data.access);
+                // Save tokens to local storage
+                localStorage.setItem('accessToken', response.data.access);
                 localStorage.setItem('refreshToken', response.data.refresh);
 
                 setSuccessMessage('Logged in successfully!');
-                console.log("Logged in successfully!", response.data);
+                setIsAuthenticated(true); // Update authentication status
 
                 setTimeout(() => {
                     navigate('/product');

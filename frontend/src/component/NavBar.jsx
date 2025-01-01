@@ -1,34 +1,43 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import './Navbar.css';
 
-const Navbar = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [cartId, setCartId] = useState(localStorage.getItem("cartId") || "");
+const Navbar = ({ isAuthenticated, setIsAuthenticated }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // This effect will run every time the component renders
-    const token = localStorage.getItem("token");
-    setIsAuthenticated(!!token); // true if token exists, false otherwise
-  }, [localStorage.getItem("token")]); // Dependency on token from localStorage
+    const checkAuth = () => {
+      const token = localStorage.getItem("accessToken");
+      setIsAuthenticated(!!token);
+    };
+
+    // Check authentication on mount
+    checkAuth();
+
+    // Listen for changes in local storage
+    window.addEventListener("storage", checkAuth);
+
+    return () => {
+      window.removeEventListener("storage", checkAuth);
+    };
+  }, [setIsAuthenticated]);
 
   const handleLogout = () => {
-    // Clear localStorage or any other stored data
+    // Clear all relevant local storage items
     localStorage.removeItem("cartId");
-    localStorage.removeItem("token");  // Clear token
-    localStorage.removeItem("refreshToken"); // Clear refresh token (optional)
-    // Update state to trigger re-render
+    localStorage.removeItem("accessToken");  
+    localStorage.removeItem("refreshToken"); 
+    
     setIsAuthenticated(false);
-    setCartId(""); // Optionally, clear cart ID from state as well
-    // Navigate to the sign-in page
-    navigate("/user/signin");
+    
+    // Redirect to the product page
+    navigate("/product");
   };
 
   return (
     <nav className="navbar">
       <div className="nav-links">
-        {cartId && <Link to={`/carts/${cartId}`} className="nav-link">Cart</Link>}
+        
         {!isAuthenticated ? (
           <>
             <Link to="/user/signin" className="nav-link">Sign In</Link>
@@ -37,6 +46,7 @@ const Navbar = () => {
         ) : (
           <>
             <Link to="/profile" className="nav-link">Profile</Link>
+            <Link to="/user/address" className="nav-link">Address</Link>
             <button onClick={handleLogout} className="logout-button">Logout</button>
           </>
         )}
