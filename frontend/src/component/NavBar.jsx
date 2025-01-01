@@ -37,7 +37,9 @@ const Navbar = ({ isAuthenticated, setIsAuthenticated }) => {
   return (
     <nav className="navbar">
       <div className="nav-links">
-        
+      <Link to={`/carts/${localStorage.getItem('cartId') || 'default'}`} className="nav-link">
+        Cart
+      </Link> 
         {!isAuthenticated ? (
           <>
             <Link to="/user/signin" className="nav-link">Sign In</Link>

@@ -8,31 +8,55 @@ const Cart = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchCart = async () => {
+    const fetchOrCreateCart = async () => {
       try {
-        const cartId = localStorage.getItem("cartId");
+        let cartId = localStorage.getItem("cartId");
         if (cartId) {
+          // Fetch existing cart
           const response = await axios.get(`http://127.0.0.1:8000/store/carts/${cartId}/`);
           setCart(response.data);
         } else {
-          console.log("Cart ID not found.");
+          // Create a new cart
+          const response = await axios.post(`http://127.0.0.1:8000/store/carts/`);
+          cartId = response.data.id;
+          localStorage.setItem("cartId", cartId);
+          setCart(response.data);
         }
       } catch (error) {
-        console.error("Failed to fetch cart data", error);
+        console.error("Failed to fetch or create cart", error);
       }
     };
 
-    fetchCart();
+    fetchOrCreateCart();
   }, []);
 
   if (!cart) {
     return <div className="cart-loading">Loading cart...</div>;
   }
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     const cartId = localStorage.getItem("cartId");
-    if (cartId) {
-      navigate(`/checkout/${cartId}`);
+    if (!cartId) {
+      alert("Cart ID not found.");
+      return;
+    }
+
+    try {
+      const response = await axios.post(`http://127.0.0.1:8000/store/create-order/`, {
+        cart_id: cartId,
+      });
+      
+      alert("Order created successfully! Order ID: " + response.data.id);
+
+      // Clear the cart
+      localStorage.removeItem("cartId");
+      setCart(null);
+
+      // Optionally navigate to an order confirmation page
+      navigate(`/order-confirmation/${response.data.id}`);
+    } catch (error) {
+      console.error("Failed to create order", error);
+      alert("Failed to create order. Please try again.");
     }
   };
 
@@ -53,7 +77,8 @@ const Cart = () => {
     try {
       const cartId = localStorage.getItem("cartId");
       if (cartId) {
-        await axios.put(`http://127.0.0.1:8000/store/carts/${cartId}/items/${itemId}/`, { quantity });
+        // Make sure the request URL includes the correct cart ID and item ID
+        await axios.patch(`http://127.0.0.1:8000/store/carts/${cartId}/items/${itemId}/`, { quantity });
       }
     } catch (error) {
       console.error("Failed to update quantity", error);
@@ -71,6 +96,7 @@ const Cart = () => {
     try {
       const cartId = localStorage.getItem("cartId");
       if (cartId) {
+        // Ensure the request URL is correct for removing the item from the cart
         await axios.delete(`http://127.0.0.1:8000/store/carts/${cartId}/items/${itemId}/`);
       }
     } catch (error) {

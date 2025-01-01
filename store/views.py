@@ -142,29 +142,45 @@ class AddressViewSet(viewsets.ModelViewSet):
         serializer.save(customer=self.request.user.customer)
 
 
-class OrderViewSet(viewsets.ModelViewSet):
-    serializer_class = OrderSerializer
-    permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        return Order.objects.filter(customer=self.request.user.customer)
+class OrderViewSet(ModelViewSet):
+    http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
 
+    def get_permissions(self):
+        if self.request.method in ['PATCH', 'DELETE']:
+            return [IsAdminUser()]
+        return [IsAuthenticated()]
 
-class CreateOrderViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
-    serializer_class = CreateOrderSerializer
-    permission_classes = [IsAuthenticated]
-
-    def perform_create(self, serializer):
-        serializer.save(customer=self.request.user.customer)
-
-
-class OrderItemViewSet(viewsets.ReadOnlyModelViewSet):  # Correct if only read operations (GET) are needed
-    serializer_class = OrderItemSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        order_id = self.kwargs.get('order_id')
-        return OrderItem.objects.filter(
-            order__id=order_id,
-            order__customer=self.request.user.customer
+    def create(self, request, *args, **kwargs):
+        serializer = CreateOrderSerializer(
+            data=request.data,
+            context={'user_id': self.request.user.id}
         )
+        serializer.is_valid(raise_exception=True)
+        order = serializer.save()
+
+        # Serialize the order and return the response
+        serializer = OrderSerializer(order)
+        return Response(serializer.data)
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return CreateOrderSerializer
+        elif self.request.method == 'PATCH':
+            return UpdateOrderSerializer
+        return OrderSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+
+        # Admins can see all orders
+        if user.is_staff:
+            return Order.objects.all()
+
+        # Assuming each user has a related customer (1:1 relationship)
+        customer = getattr(user, 'customer', None)
+        if customer:
+            return Order.objects.filter(customer_id=customer.id)
+
+        # Return an empty queryset if no related customer is found
+        return Order.objects.none()
