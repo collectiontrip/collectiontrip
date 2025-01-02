@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import './AddToCart.css'; // Ensure the CSS file is being imported
 
 const AddToCart = ({ productId, onAddSuccess, onError, buttonText = "Add to Cart" }) => {
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+
   const handleAddToCart = async () => {
     try {
       let cartId = localStorage.getItem("cartId");
@@ -34,8 +36,15 @@ const AddToCart = ({ productId, onAddSuccess, onError, buttonText = "Add to Cart
         });
       }
 
+      // Show success message
+      setShowSuccessMessage(true);
+
+      // Hide success message after 3 seconds
+      setTimeout(() => {
+        setShowSuccessMessage(false);
+      }, 3000);
+
       if (onAddSuccess) onAddSuccess();
-      alert("Item added to cart successfully.");
     } catch (error) {
       console.error(error);
       if (onError) onError(error);
@@ -44,9 +53,17 @@ const AddToCart = ({ productId, onAddSuccess, onError, buttonText = "Add to Cart
   };
 
   return (
-    <button onClick={handleAddToCart} className="add-to-cart">
-      {buttonText}
-    </button>
+    <div>
+      <button onClick={handleAddToCart} className="add-to-cart">
+        {buttonText}
+      </button>
+
+      {showSuccessMessage && (
+        <div className="success-message">
+          Success.
+        </div>
+      )}
+    </div>
   );
 };
 

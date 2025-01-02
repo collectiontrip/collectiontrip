@@ -158,17 +158,9 @@ class AddressSerializer(serializers.ModelSerializer):
             'is_shipping_address',
         ]
 
-class ProductOrderSerializer(serializers.ModelSerializer):
-    # Add the image field to display the product image
-    image = serializers.ImageField()
-
-    class Meta:
-        model = Product  # The model for your products
-        fields = ['id', 'title', 'description', 'price', 'image']
-
 
 class OrderItemSerializer(serializers.ModelSerializer):
-    product = ProductOrderSerializer
+    product = ProductSerializer()
     total_price = serializers.SerializerMethodField()
 
     def get_total_price(self, order_item: OrderItem):

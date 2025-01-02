@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './Cart.css';
 
-const Cart = () => {
+const Cart = ({ isAuthenticated, setIsAuthenticated }) => {
   const [cart, setCart] = useState(null);
   const navigate = useNavigate();
 
@@ -40,6 +40,12 @@ const Cart = () => {
       alert("Cart ID not found.");
       return;
     }
+
+    if (!isAuthenticated) {
+      navigate("/user/signin");
+      return;
+    }
+    
 
     try {
       const response = await axios.post(`http://127.0.0.1:8000/store/orders/`, {

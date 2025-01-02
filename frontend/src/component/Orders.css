@@ -1,79 +1,154 @@
+/* Parent Orders Container */
 .orders-container {
-    margin: 20px;
-  }
-  
-  .orders-title {
-    font-size: 24px;
-    font-weight: bold;
-  }
-  
-  .orders-items {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .order-item {
-    display: flex;
-    margin-bottom: 20px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-  }
-  
-  .order-item-image-container {
-    width: 100px;
-    height: 100px;
-    margin-right: 20px;
-  }
-  
-  .order-item-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  .order-item-info {
-    flex-grow: 1;
-  }
-  
-  .order-item-title {
-    font-size: 18px;
-    font-weight: bold;
-  }
-  
-  .order-item-price {
-    font-size: 16px;
-  }
-  
-  .order-item-quantity,
-  .order-item-total {
-    font-size: 16px;
-  }
-  
-  .orders-empty-message {
-    text-align: center;
-    font-size: 18px;
-    color: #888;
-  }
-  
-  /* Styling for the Pay Now Button */
-  .order-pay-now {
-    margin-top: 10px;
-    text-align: right;
-  }
-  
-  .pay-now-button {
-    padding: 10px 20px;
-    background-color: #4caf50;
-    color: white;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .pay-now-button:hover {
-    background-color: #45a049;
-  }
-  
+  background-color: #f9f9f9; /* Light gray for the parent container */
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 20px auto;
+  max-width: 600px; /* Reduced the max-width */
+}
+
+/* Title for Orders Section */
+.orders-title {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Message for Empty Orders */
+.orders-empty-message {
+  font-size: 1.2rem;
+  color: #666;
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* Individual Order Container */
+.order-container {
+  background-color: #ffffff; /* White background for each order */
+  border-radius: 10px;
+  padding: 15px;
+  margin: 10px 0; /* Gap between orders */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+  width: 100%; /* Ensure it fits within the parent container */
+}
+
+.order-container:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Title for Each Order */
+.order-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #007bff;
+}
+
+/* Wrapper for Order Items */
+.order-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px; /* Space between items */
+}
+
+/* Individual Order Item */
+.order-item {
+  background-color: #f9f9f9; /* Light gray for item */
+  border-radius: 8px;
+  padding: 15px;
+  width: 100%; /* Adjust width as needed */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.order-item:hover {
+  transform: scale(1.02);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Product Image Container */
+.order-item-image-container {
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+  border-radius: 10px;
+  margin-right: 15px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Product Image (Squeezed without cropping) */
+.order-item-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Ensures the full image is visible without cropping */
+  border-radius: 8px;
+}
+
+/* Product Info */
+.order-item-info {
+  flex: 1;
+}
+
+.order-item-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.order-item-description {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.order-item-price,
+.order-item-quantity,
+.order-item-total {
+  font-size: 1rem;
+  color: #444;
+  margin: 5px 0;
+}
+
+/* Pay Now Button and Total Price - Aligned horizontally */
+.order-pay-now {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.order-total-price {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.pay-now-button-container {
+  display: flex;
+  justify-content: flex-end; /* Align button to the right */
+}
+
+.pay-now-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.pay-now-button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}

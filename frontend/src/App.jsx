@@ -19,33 +19,16 @@ function App() {
       <div>
         {/* Pass isAuthenticated and setIsAuthenticated to NavBar */}
         <NavBar isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} />
-        
         <Routes>
           <Route path="/product" element={<ProductList />} />
           <Route path="/product/:productId" element={<ProductDetails />} />
-          <Route path="/carts/:cartId" element={<Cart />} />
-          <Route 
-            path="/user/signup" 
-            element={<SignUp />} 
-          />
+          <Route path="/carts/:cartId" element={<Cart isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} />} />
+          <Route path="/user/signup" element={<SignUp />} />
           {/* Pass setIsAuthenticated to SignIn to update authentication state */}
-          <Route 
-            path="/user/signin" 
-            element={<SignIn setIsAuthenticated={setIsAuthenticated} />} 
-          />
-          <Route 
-            path="/user/address" 
-            element={<AddressForm onSubmitSuccess={() => console.log("Address submitted!")} />} 
-          />
-          <Route 
-            path="/user/orders" 
-            element={<Orders />} 
-          />
+          <Route path="/user/signin" element={<SignIn setIsAuthenticated={setIsAuthenticated} />} />
+          <Route path="/user/address" element={<AddressForm onSubmitSuccess={() => console.log("Address submitted!")} />} />
+          <Route path="/user/orders" element={<Orders />} />
         </Routes>
-        
-        
-
-        
       </div>
     </Router>
   );
