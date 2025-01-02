@@ -49,6 +49,7 @@ const Navbar = ({ isAuthenticated, setIsAuthenticated }) => {
           <>
             <Link to="/profile" className="nav-link">Profile</Link>
             <Link to="/user/address" className="nav-link">Address</Link>
+            <Link to="/user/orders">My Orders</Link>
             <button onClick={handleLogout} className="logout-button">Logout</button>
           </>
         )}

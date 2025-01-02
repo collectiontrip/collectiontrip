@@ -42,7 +42,7 @@ const Cart = () => {
     }
 
     try {
-      const response = await axios.post(`http://127.0.0.1:8000/store/create-order/`, {
+      const response = await axios.post(`http://127.0.0.1:8000/store/orders/`, {
         cart_id: cartId,
       });
       
@@ -53,7 +53,7 @@ const Cart = () => {
       setCart(null);
 
       // Optionally navigate to an order confirmation page
-      navigate(`/order-confirmation/${response.data.id}`);
+      navigate(`/user/orders/`);
     } catch (error) {
       console.error("Failed to create order", error);
       alert("Failed to create order. Please try again.");

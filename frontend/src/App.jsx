@@ -3,6 +3,7 @@ import './App.css';
 import ProductList from './component/ProductList';
 import ProductDetails from './component/ProductDetails'; 
 import Cart from './component/Cart'; 
+import Orders from './component/Orders';
 import NavBar from './component/NavBar'; 
 import SignUp from './component/auth/SignUp'; 
 import SignIn from './component/auth/SignIn'; 
@@ -36,9 +37,15 @@ function App() {
             path="/user/address" 
             element={<AddressForm onSubmitSuccess={() => console.log("Address submitted!")} />} 
           />
+          <Route 
+            path="/user/orders" 
+            element={<Orders />} 
+          />
         </Routes>
+        
+        
 
-        <h1>Hello</h1>
+        
       </div>
     </Router>
   );
