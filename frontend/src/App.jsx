@@ -8,6 +8,7 @@ import NavBar from './component/NavBar';
 import SignUp from './component/auth/SignUp'; 
 import SignIn from './component/auth/SignIn'; 
 import AddressForm from './component/Address';
+import CollectionList from './component/CollectionList'; // Import the CollectionList component
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
           <Route path="/user/signin" element={<SignIn setIsAuthenticated={setIsAuthenticated} />} />
           <Route path="/user/address" element={<AddressForm onSubmitSuccess={() => console.log("Address submitted!")} />} />
           <Route path="/user/orders" element={<Orders />} />
+          <Route path="/collections" element={<CollectionList />} /> {/* Add route for CollectionList */}
         </Routes>
       </div>
     </Router>
