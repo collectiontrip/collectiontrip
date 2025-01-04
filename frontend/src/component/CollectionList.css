@@ -1,6 +1,6 @@
 /* Parent container styling */
 .collection-container {
-    width: 80%; /* Set the container width to 80% of the available width */
+    width: 100%; /* Set the container width to 80% of the available width */
     max-height: 400px; /* Set a maximum height for vertical scrolling */
     overflow-x: auto; /* Enable horizontal scroll */
     overflow-y: hidden; /* Disable vertical scroll */
@@ -18,7 +18,7 @@
     display: flex;
     flex-direction: row; /* Set to horizontal layout */
     gap: 20px; /* Space between collection items */
-    padding-bottom: 10px; /* Optional: space at the bottom */
+    padding: 10px; /* Optional: space at the bottom */
 }
 
 /* Individual collection item styling */

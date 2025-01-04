@@ -3,7 +3,7 @@ import axios from "axios";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import "./ProductList.css";
 import AddToCart from './AddToCart';
-import CollectionList from './CollectionList'; // Import CollectionList
+import CollectionList from "./CollectionList";
 
 const ImageSlider = ({ images, onClose }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -80,6 +80,7 @@ const ProductList = () => {
         setFilteredProducts(filtered);
         // Update URL with the search term
         navigate(`?search=${searchTerm}`);
+
     };
 
     // Update the search term when URL changes (for deep linking)
@@ -121,67 +122,61 @@ const ProductList = () => {
 
     return (
         <div className="product-list-parent-container">
-            <div className="main-container">
-                {/* Left Section: Collection List */}
-                <div className="left-section">
-                    <CollectionList />
-                </div>
+            {/* Search Container */}
+            <div className="search-container">
+                <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                    placeholder="Search products..."
+                />
+                <button onClick={handleSearch}>Search</button>
+            </div>
 
-                {/* Right Section: Product List */}
-                <div className="right-section">
-                    {/* Search Container */}
-                    <div className="search-container">
-                        <input
-                            type="text"
-                            value={searchTerm}
-                            onChange={handleSearchChange}
-                            placeholder="Search products..."
-                        />
-                        <button onClick={handleSearch}>Search</button>
-                    </div>
+            <div className="collection">
+                <CollectionList/>
+            </div>
 
-                    {/* Product List Container */}
-                    <div className="product-list-container">
-                        {filteredProducts.length > 0 ? (
-                            filteredProducts.map((product) => (
-                                <div className="product-item" key={product.id}>
-                                    <div className="product-image">
-                                        {product.images && product.images.length > 0 && (
-                                            <img
-                                                src={product.images[0].image}
-                                                alt="Product Thumbnail"
-                                                onClick={() => openFullScreenImage(product.images)}
-                                            />
-                                        )}
-                                    </div>
+            {/* Product List Container */}
+            <div className="product-list-container">
+                {filteredProducts.length > 0 ? (
+                    filteredProducts.map((product) => (
+                        <div className="product-item" key={product.id}>
+                            <div className="product-image">
+                                {product.images && product.images.length > 0 && (
+                                    <img
+                                        src={product.images[0].image}
+                                        alt="Product Thumbnail"
+                                        onClick={() => openFullScreenImage(product.images)}
+                                    />
+                                )}
+                            </div>
 
-                                    <div className="product-detail">
-                                        <Link to={`/product/${product.id}`}>
-                                            <h3>{product.title}</h3>
-                                        </Link>
-                                        <p>{product.description}</p>
-                                        <h4>{product.price}$</h4>
-                                        <div className="product-actions">
-                                            <AddToCart 
-                                                productId={product.id} 
-                                                onAddSuccess={() => console.log("Added successfully!")} 
-                                                onError={(err) => console.error(err)} 
-                                            />
-                                            <button 
-                                                className="buy-now-btn" 
-                                                onClick={() => handleBuyNow(product)}
-                                            >
-                                                Buy Now
-                                            </button>
-                                        </div>
-                                    </div>
+                            <div className="product-detail">
+                                <Link to={`/product/${product.id}`}>
+                                    <h3>{product.title}</h3>
+                                </Link>
+                                <p>{product.description}</p>
+                                <h4>{product.price}$</h4>
+                                <div className="product-actions">
+                                    <AddToCart 
+                                        productId={product.id} 
+                                        onAddSuccess={() => console.log("Added successfully!")} 
+                                        onError={(err) => console.error(err)} 
+                                    />
+                                    <button 
+                                        className="buy-now-btn" 
+                                        onClick={() => handleBuyNow(product)}
+                                    >
+                                        Buy Now
+                                    </button>
                                 </div>
-                            ))
-                        ) : (
-                            <p>No products found.</p>
-                        )}
-                    </div>
-                </div>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <p>No products found.</p>
+                )}
             </div>
 
             {/* Modal for Full-Screen Image */}
