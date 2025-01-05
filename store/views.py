@@ -42,24 +42,40 @@ class CollectionViewSet(ModelViewSet):
         return super().destroy(request, *args, **kwargs)
         
 
+from django.db.models import Q
+
 class ProductViewset(ModelViewSet):
-    queryset = Product.objects.prefetch_related('images').all()
     serializer_class = ProductSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = ProductFilter
     pagination_class = DefaultPagination
-    search_fields =  ['title', 'description', 'collection__title']
+    search_fields = ['title', 'description', 'collection__title']  # This is still valid if SearchFilter is used
     ordering_fields = ['price', 'last_update']
     permission_classes = [IsAdminOrReadOnly]
-    
-    
+
+    def get_queryset(self):
+        # Get the base queryset
+        queryset = Product.objects.prefetch_related('images').all()
+
+        # Handle custom search logic
+        search_query = self.request.query_params.get('search', '')
+        if search_query:
+            queryset = queryset.filter(
+                Q(title__icontains=search_query) |
+                Q(description__icontains=search_query) |
+                Q(collection__title__icontains=search_query)  # Search in collection title
+            )
+        return queryset
+
     def get_serializer_context(self):
         return {'request': self.request}
-    
+
     def destroy(self, request, *args, **kwargs):
         if OrderItem.objects.filter(product_id=kwargs['pk']).count() > 0:
-            return Response({'error': 'Product cannot be deleted because it is associated with an order item.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-    
+            return Response(
+                {'error': 'Product cannot be deleted because it is associated with an order item.'},
+                status=status.HTTP_405_METHOD_NOT_ALLOWED
+            )
         return super().destroy(request, *args, **kwargs)
 
 

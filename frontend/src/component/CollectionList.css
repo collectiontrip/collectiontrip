@@ -1,24 +1,26 @@
 /* Parent container styling */
 .collection-container {
-    width: 100%; /* Set the container width to 80% of the available width */
-    max-height: 400px; /* Set a maximum height for vertical scrolling */
-    overflow-x: auto; /* Enable horizontal scroll */
-    overflow-y: hidden; /* Disable vertical scroll */
-    padding: 0 10%; /* Add 10% padding to the left and right sides */
+    width: 100%;
+    max-height: 400px; /* Set the maximum height to enable scrolling */
+    overflow-x: hidden; /* Disable horizontal scroll */
+    overflow-y: auto; /* Enable vertical scroll */
+    padding: 0 5%; /* Adjusted padding to be relative */
     border: 1px solid #ccc;
     border-radius: 8px;
     background-color: #f9f9f9;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     display: flex;
-    justify-content: center; /* Center the content horizontally */
+    justify-content: center;
 }
 
 /* Title list container */
 .collection-list {
     display: flex;
-    flex-direction: row; /* Set to horizontal layout */
-    gap: 20px; /* Space between collection items */
-    padding: 10px; /* Optional: space at the bottom */
+    flex-wrap: wrap; /* Allow items to wrap and adjust */
+    gap: 20px;
+    padding: 10px;
+    justify-content: center; /* Center items */
+    width: 100%;
 }
 
 /* Individual collection item styling */
@@ -32,11 +34,29 @@
     font-weight: 500;
     color: #333;
     transition: transform 0.2s ease, background-color 0.2s ease;
-    flex-shrink: 0; /* Prevent items from shrinking */
+    flex-shrink: 0;
+    cursor: pointer;
+    width: 100%; /* Ensure it takes full width */
+    max-width: 180px; /* Limit the max width of each item */
+    max-height: 150px; /* Set a max height to allow scrolling within each item */
+    overflow-y: auto; /* Enable vertical scroll inside collection-item */
 }
 
 /* Hover effect for collection items */
 .collection-item:hover {
     transform: scale(1.05);
     background-color: #f0f0f0;
+}
+
+/* Active (clicked) item styling */
+.collection-item.selected {
+    background-color: #007bff; /* Change background color when clicked */
+    color: #fff; /* Change text color to white */
+    border-color: #0056b3; /* Darken border */
+    transform: scale(1.05); /* Slightly scale the selected item */
+}
+
+/* Transition effect for active state */
+.collection-item.selected {
+    transition: transform 0.2s ease, background-color 0.3s ease, border-color 0.3s ease;
 }

@@ -2,189 +2,194 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import "./ProductList.css";
-import AddToCart from './AddToCart';
+import AddToCart from "./AddToCart";
 import CollectionList from "./CollectionList";
-
-const ImageSlider = ({ images, onClose }) => {
-    const [currentIndex, setCurrentIndex] = useState(0);
-
-    const nextImage = () => {
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length); 
-    };
-
-    const previousImage = () => {
-        setCurrentIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
-    };
-
-    return (
-        <div className="image-slider-container">
-            <img 
-                src={images[currentIndex]?.image} 
-                alt={`Product Image ${currentIndex + 1}`} 
-            />
-            <div className="slider-controls">
-                <button className="prev" onClick={previousImage}>&lt;</button>
-                <button className="next" onClick={nextImage}>&gt;</button>
-            </div>
-            <button className="close-btn" onClick={onClose}>Close</button>
-        </div>
-    );
-};
 
 const ProductList = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
-    const [selectedImage, setSelectedImage] = useState(null); 
-    const [searchTerm, setSearchTerm] = useState(""); 
-    const [filteredProducts, setFilteredProducts] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [minPrice, setMinPrice] = useState("");
+    const [maxPrice, setMaxPrice] = useState("");
+    const [sortOrder, setSortOrder] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [categories, setCategories] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState("");
+    const [showCollections, setShowCollections] = useState(false);
+
     const navigate = useNavigate();
     const location = useLocation();
 
-    // Fetch products on load
+    const getQueryParams = () => new URLSearchParams(location.search);
+
     useEffect(() => {
         const fetchProducts = async () => {
+            const queryParams = getQueryParams();
             try {
-                const response = await axios.get("http://127.0.0.1:8000/store/products/");
+                const response = await axios.get("http://127.0.0.1:8000/store/products/", {
+                    params: Object.fromEntries(queryParams.entries()),
+                });
+
                 const data = response.data;
-
-                if (data && Array.isArray(data.results)) {
-                    setProducts(data.results);
-                    setFilteredProducts(data.results); // Set full list initially
-                } else {
-                    setProducts([]);
-                    setFilteredProducts([]);
-                }
-
+                setProducts(data?.results || []);
+                setTotalPages(data?.total_pages || 1);
                 setLoading(false);
-                setError(false);
-            } catch (error) {
-                console.error("Error fetching products:", error);
+            } catch (err) {
+                console.error("Error fetching products:", err);
                 setError(true);
                 setLoading(false);
             }
         };
 
-        fetchProducts();
-    }, []);
+        const fetchCategories = async () => {
+            try {
+                const response = await axios.get("http://127.0.0.1:8000/store/categories/");
+                setCategories(response.data || []);
+            } catch (err) {
+                console.error("Error fetching categories:", err);
+            }
+        };
 
-    // Handle search
-    const handleSearchChange = (e) => {
-        setSearchTerm(e.target.value);
+        fetchCategories();
+        fetchProducts();
+    }, [location.search]);
+
+    const updateQueryParams = (newParams, resetParams = []) => {
+        const queryParams = getQueryParams();
+        resetParams.forEach((param) => queryParams.delete(param));
+        Object.entries(newParams).forEach(([key, value]) => {
+            value ? queryParams.set(key, value) : queryParams.delete(key);
+        });
+        navigate(`?${queryParams.toString()}`);
     };
 
     const handleSearch = () => {
-        const filtered = products.filter(product =>
-            product.title.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-        setFilteredProducts(filtered);
-        // Update URL with the search term
-        navigate(`?search=${searchTerm}`);
-
+        setCurrentPage(1);
+        updateQueryParams({ search: searchTerm }, ["collection_id", "price__gt", "price__lt", "ordering", "category"]);
     };
 
-    // Update the search term when URL changes (for deep linking)
-    useEffect(() => {
-        const params = new URLSearchParams(location.search);
-        const searchQuery = params.get("search") || "";
-        setSearchTerm(searchQuery);
-        if (searchQuery) {
-            const filtered = products.filter(product =>
-                product.title.toLowerCase().includes(searchQuery.toLowerCase())
-            );
-            setFilteredProducts(filtered);
+    const handleFilterByPrice = () => {
+        setCurrentPage(1);
+        updateQueryParams({ price__gt: minPrice, price__lt: maxPrice }, ["search", "collection_id", "ordering", "category"]);
+    };
+
+    const handleCollectionSelect = (collectionId) => {
+        setCurrentPage(1);
+        updateQueryParams({ collection_id: collectionId }, ["search", "price__gt", "price__lt", "ordering", "category"]);
+    };
+
+    const handleCategorySelect = (categoryId) => {
+        setSelectedCategory(categoryId);
+        setCurrentPage(1);
+        updateQueryParams({ category: categoryId }, ["search", "price__gt", "price__lt", "ordering", "collection_id"]);
+    };
+
+    const handlePageChange = (direction) => {
+        const newPage = currentPage + direction;
+        if (newPage > 0 && newPage <= totalPages) {
+            setCurrentPage(newPage);
+            updateQueryParams({ page: newPage });
         }
-    }, [location.search, products]);
-
-    const handleAddToCart = (product) => {
-        console.log(`Added to cart: ${product.title}`);
     };
 
-    const handleBuyNow = (product) => {
-        console.log(`Buy Now: ${product.title}`);
-    };
-
-    const openFullScreenImage = (image) => {
-        setSelectedImage(image); 
-    };
-
-    const closeFullScreenImage = () => {
-        setSelectedImage(null);
-    };
-
-    if (loading) {
-        return <h2>Loading...</h2>;
-    }
-
-    if (error) {
-        return <h2>Error occurred while fetching products. Please try again later.</h2>;
-    }
+    if (loading) return <h2>Loading...</h2>;
+    if (error) return <h2>Error occurred while fetching products. Please try again later.</h2>;
 
     return (
-        <div className="product-list-parent-container">
-            {/* Search Container */}
-            <div className="search-container">
-                <input
-                    type="text"
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                    placeholder="Search products..."
-                />
-                <button onClick={handleSearch}>Search</button>
-            </div>
-
-            <div className="collection">
-                <CollectionList/>
-            </div>
-
-            {/* Product List Container */}
-            <div className="product-list-container">
-                {filteredProducts.length > 0 ? (
-                    filteredProducts.map((product) => (
-                        <div className="product-item" key={product.id}>
-                            <div className="product-image">
-                                {product.images && product.images.length > 0 && (
-                                    <img
-                                        src={product.images[0].image}
-                                        alt="Product Thumbnail"
-                                        onClick={() => openFullScreenImage(product.images)}
-                                    />
-                                )}
-                            </div>
-
-                            <div className="product-detail">
-                                <Link to={`/product/${product.id}`}>
-                                    <h3>{product.title}</h3>
-                                </Link>
-                                <p>{product.description}</p>
-                                <h4>{product.price}$</h4>
-                                <div className="product-actions">
-                                    <AddToCart 
-                                        productId={product.id} 
-                                        onAddSuccess={() => console.log("Added successfully!")} 
-                                        onError={(err) => console.error(err)} 
-                                    />
-                                    <button 
-                                        className="buy-now-btn" 
-                                        onClick={() => handleBuyNow(product)}
-                                    >
-                                        Buy Now
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    ))
-                ) : (
-                    <p>No products found.</p>
-                )}
-            </div>
-
-            {/* Modal for Full-Screen Image */}
-            {selectedImage && (
-                <div className="full-screen-modal">
-                    <ImageSlider images={selectedImage} onClose={closeFullScreenImage} />
+        <div className="product-list-main-container">
+            <header className="product-list-header">
+                <button className="toggle-collections-btn" onClick={() => setShowCollections(!showCollections)}>
+                    {showCollections ? "Hide Collections" : "Show Collections"}
+                </button>
+                {showCollections && <CollectionList onCollectionSelect={handleCollectionSelect} />}
+                <div className="search-container">
+                    <input
+                        type="text"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        placeholder="Search products..."
+                    />
+                    <button onClick={handleSearch}>Search</button>
                 </div>
-            )}
+            </header>
+
+            <main className="product-list-body-container">
+                {/* Filters and Sorting */}
+                <aside className="product-list-left-container">
+                    <section className="filter-container">
+                        <h3>Filters</h3>
+                        <div className="category-filter">
+                            <label>Category</label>
+                            <select onChange={(e) => handleCategorySelect(e.target.value)} value={selectedCategory}>
+                                <option value="">All Categories</option>
+                                {categories.map((category) => (
+                                    <option key={category.id} value={category.id}>
+                                        {category.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="price-filter">
+                            <input
+                                type="number"
+                                value={minPrice}
+                                onChange={(e) => setMinPrice(e.target.value)}
+                                placeholder="Min Price"
+                            />
+                            <input
+                                type="number"
+                                value={maxPrice}
+                                onChange={(e) => setMaxPrice(e.target.value)}
+                                placeholder="Max Price"
+                            />
+                            <button onClick={handleFilterByPrice}>Filter by Price</button>
+                        </div>
+                        <div className="sort-by">
+                            <select value={sortOrder} onChange={(e) => updateQueryParams({ ordering: e.target.value })}>
+                                <option value="">Sort By</option>
+                                <option value="price">Price: Low to High</option>
+                                <option value="-price">Price: High to Low</option>
+                            </select>
+                        </div>
+                    </section>
+                </aside>
+
+                {/* Product List */}
+                <section className="product-list-right-container">
+                    <div className="product-list-container">
+                        {products.length > 0 ? (
+                            products.map((product) => (
+                                <div className="product-item" key={product.id}>
+                                    <div className="product-image">
+                                        {product.images?.[0] && (
+                                            <img src={product.images[0].image} alt="Product Thumbnail" />
+                                        )}
+                                    </div>
+                                    <div className="product-detail">
+                                        <Link to={`/product/${product.id}`}>
+                                            <h3>{product.title}</h3>
+                                        </Link>
+                                        <p>{product.description}</p>
+                                        <h4>{product.price}$</h4>
+                                        <AddToCart productId={product.id} />
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <p>No products found.</p>
+                        )}
+                    </div>
+
+                    {/* Pagination */}
+                    <div className="pagination-controls">
+                        <button disabled={currentPage === 1} onClick={() => handlePageChange(-1)}>Previous</button>
+                        <span>Page {currentPage} of {totalPages}</span>
+                        <button disabled={currentPage === totalPages} onClick={() => handlePageChange(1)}>Next</button>
+                    </div>
+                </section>
+            </main>
         </div>
     );
 };
