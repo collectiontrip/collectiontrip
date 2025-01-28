@@ -145,8 +145,7 @@ class CustomerViewSet(ModelViewSet):
             serializer.save()
             return Response(serializer.data)
         
-        
-        
+
 class AddressViewSet(viewsets.ModelViewSet):
     serializer_class = AddressSerializer
     permission_classes = [IsAuthenticated]

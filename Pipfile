@@ -15,19 +15,21 @@ django-templated-mail = "*"
 celery = "*"
 redis = "*"
 mysqlclient = "*"
+flower = "*"
 razorpay = "*"
 locust = "*"
 payu = "*"
 django-paypal = "*"
-django = "*"
 paypalrestsdk = "*"
-flower = "*"
-
-[dev-packages]
 pytest = "*"
 pytest-django = "*"
 pytest-watch = "*"
 model-bakery = "*"
+django = "*"
+channels = "*"
+daphne = "*"
+
+[dev-packages]
 
 [requires]
-python_version = "*"
+python_version = "3.11"

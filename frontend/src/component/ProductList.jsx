@@ -43,16 +43,9 @@ const ProductList = () => {
             }
         };
 
-        const fetchCategories = async () => {
-            try {
-                const response = await axios.get("http://127.0.0.1:8000/store/categories/");
-                setCategories(response.data || []);
-            } catch (err) {
-                console.error("Error fetching categories:", err);
-            }
-        };
+        
 
-        fetchCategories();
+        
         fetchProducts();
     }, [location.search]);
 

@@ -42,16 +42,29 @@ INSTALLED_APPS = [
     'django_filters',
     'rest_framework',
     'djoser',
+    'channels',
     'playground',
     'store', 
     'likes',
     'tags',
     'core',
+    'chat',
 ]
 
 from corsheaders.defaults import default_methods, default_headers
 CORS_ALLOW_METHODS = default_methods
 CORS_ALLOW_HEADERS = default_headers + ('Refresh-Token',)
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)], 
+            
+        },
+    },
+}
+
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -95,6 +108,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'collectiontrip.wsgi.application'
+ASGI_APPLICATION = 'collectiontrip.asgi.application'
+
 
 
 # Database
@@ -185,7 +200,7 @@ ADMINS = [
     ('Mosh', 'admin@ravibuy.com')
 ]
 
-CELERY_BROKER_URL = 'redis://localhost:6379/1'
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_BEAT_SCHEDULE = {
     'notify_customers': {
         'task': 'playground.tasks.notify_customers',

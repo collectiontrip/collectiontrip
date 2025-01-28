@@ -1,0 +1,50 @@
+.chatroom-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .chatroom {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #ffffff;
+    padding: 16px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .chatroom:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .chatroom-link {
+    text-decoration: none;
+    color: #333;
+  }
+  
+  .chatroom-item {
+    margin: 8px 0;
+  }
+  
+  .user-info span {
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #007bff;
+  }
+  
+  .status-info span {
+    font-size: 0.9em;
+    color: #555;
+  }
+  
+  .created-at-info span {
+    font-size: 0.8em;
+    color: #777;
+  }
+  

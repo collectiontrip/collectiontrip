@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './Cart.css';
+import AxiosInstance from './auth/AxiosInstance';
 
 const Cart = ({ isAuthenticated, setIsAuthenticated }) => {
   const [cart, setCart] = useState(null);
@@ -48,7 +49,7 @@ const Cart = ({ isAuthenticated, setIsAuthenticated }) => {
     
 
     try {
-      const response = await axios.post(`http://127.0.0.1:8000/store/orders/`, {
+      const response = await AxiosInstance.post(`store/orders/`, {
         cart_id: cartId,
       });
       

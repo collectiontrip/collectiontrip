@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom'; // Import Link from React Router
 import './Orders.css'; // Assuming you are using the same Orders CSS file
+import AxiosInstance from './auth/AxiosInstance';
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -10,8 +11,8 @@ const Orders = () => {
 
   useEffect(() => {
     // Fetch orders from the backend API
-    axios
-      .get("http://127.0.0.1:8000/store/orders/")
+    AxiosInstance
+      .get("/store/orders/")
       .then((response) => {
         setOrders(response.data);
         setLoading(false);

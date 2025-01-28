@@ -37,7 +37,7 @@ class ProductAdmin(admin.ModelAdmin):
     }
     actions = ['clear_inventory']
     inlines = [ProductImageInline]
-    list_display = ['title', 'price',
+    list_display = [ 'id', 'title', 'price',
                     'inventory_status', 'collection_title']
     list_editable = ['price']
     list_filter = ['collection', 'last_update', InventoryFilter]

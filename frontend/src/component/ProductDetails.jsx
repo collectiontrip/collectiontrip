@@ -4,13 +4,13 @@ import './ProductDetails.css';
 import { useParams } from 'react-router-dom'; // Import useParams hook
 import AddToCart from './AddToCart';
 
-
 const ProductDetails = () => {
   const { productId } = useParams(); // Get productId from URL params
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null); // State to track the selected image
+  const [globalMessage, setGlobalMessage] = useState(''); // State for the global success message
   const apiUrl = `http://127.0.0.1:8000/store/products/${productId}/`;
 
   useEffect(() => {
@@ -29,6 +29,10 @@ const ProductDetails = () => {
     fetchProductDetails();
   }, [apiUrl]);
 
+  const handleAddToCartSuccess = (message) => {
+    setGlobalMessage(message);
+    setTimeout(() => setGlobalMessage(''), 3000); // Clear the message after 3 seconds
+  };
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
@@ -39,6 +43,7 @@ const ProductDetails = () => {
 
   return (
     <div className="product-details-container">
+      {globalMessage && <div className="global-message">{globalMessage}</div>}
       <div className="product-images">
         <div className="large-image">
           <img src={selectedImage} alt="Product" />
@@ -64,7 +69,7 @@ const ProductDetails = () => {
         <div className="product-buttons">
           <AddToCart
             productId={product.id} 
-            onAddSuccess={() => console.log("Added successfully!")} 
+            onAddSuccess={handleAddToCartSuccess} 
             onError={(err) => console.error(err)} 
           />
           <button className="buy-now">Buy Now</button>

@@ -1,0 +1,129 @@
+.chatroom-detail-container {
+    width: 60vw;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #f7f7f7;
+    border: 5px solid #ddd;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+  }
+  
+  .chatroom-info {
+    margin-bottom: 20px;
+  }
+  
+  .chatbox {
+    padding: 20px;
+  }
+  
+  .chatbox ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .chatbox li {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .chatbox li.sender {
+    align-items: flex-end;
+  }
+  
+  .chatbox li.receiver {
+    align-items: flex-start;
+  }
+  
+  .username {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .sender .username {
+    align-self: flex-end;
+  }
+  
+  .receiver .username {
+    align-self: flex-start;
+  }
+  
+  .sender .message {
+    background-color: #DCF8C6;
+    padding: 10px;
+    border-radius: 10px;
+    align-self: flex-end;
+  }
+  
+  .receiver .message {
+    background-color: #F7F7F7;
+    padding: 10px;
+    border-radius: 10px;
+    align-self: flex-start;
+  }
+  
+  .media-container {
+    margin-top: 10px;
+  }
+  
+  .media-container img {
+    max-width: 200px;
+    border-radius: 10px;
+  }
+  
+  .media-container video, .media-container audio {
+    width: 320px;
+    margin-top: 10px;
+  }
+  
+  .chatbox form {
+    margin-top: 20px;
+  }
+  
+  .chatbox input[type="text"] {
+    width: 70%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+  }
+  
+  .chatbox input[type="file"] {
+    margin-top: 10px;
+  }
+  
+  .chatbox button[type="button"] {
+    margin-top: 10px;
+    margin-right: 10px;
+  }
+  
+  .chatbox button[type="submit"] {
+    width: 30%;
+    padding: 10px;
+    font-size: 16px;
+    background-color: #337ab7;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .chatbox button[type="submit"]:hover {
+    background-color: #23527c;
+  }
+  
+  .media-capture button {
+    margin-top: 10px;
+  }
+  
+  .global-message {
+    background-color: #4caf50;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  

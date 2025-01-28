@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./CollectionList.css";
 
 const CollectionList = ({ onCollectionSelect }) => {
     const [collections, setCollections] = useState([]);

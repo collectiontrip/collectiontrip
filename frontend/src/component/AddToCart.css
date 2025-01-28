@@ -1,37 +1,45 @@
-.add-to-cart {
-    background-color: #008080; /* Deep Teal */
-    color: white; /* Text color for contrast */
-    padding: 10px 20px; /* Button padding */
-    border: none; /* Remove default border */
-    border-radius: 5px; /* Smooth corners */
-    cursor: pointer; /* Pointer cursor on hover */
-    font-size: 16px; /* Adjust font size */
-    transition: background-color 0.3s ease; /* Smooth hover effect */
-  }
-  
-  .add-to-cart:hover {
-    background-color: #006666; /* Darker teal for hover */
-  }
-  
-
-  .success-message {
-    background-color: transparent; /* No background color */
-    color: #4CAF50; /* Green text color */
-    padding: 10px;
-     /* Green border */
-    
-    text-align: center;
-    font-weight: bold;
+.add-to-cart-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: opacity 0.5s ease;
-    margin: 10px;
-    position: absolute; /* Positioned relative to the container */
-    top: 0; /* Align it to the top */
-    left: 50%; /* Center it horizontally */
-    transform: translateX(-50%); /* Offset by 50% to center it */
-    width: auto;
-    z-index: 10; /* Ensure it's above other content */
+    max-width: 300px;
+    margin: 0 auto;
   }
   
+  .add-to-cart-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #28a745;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
   
+  .add-to-cart-button:hover {
+    background-color: #218838;
+  }
+  
+  .message-container {
+    margin-top: 10px;
+  }
+  
+  .success-message {
+    font-size: 14px;
+    font-weight: 500;
+    color: #155724;
+    background-color: #d4edda;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #c3e6cb;
+    text-align: center;
+    width: 100%;
+  }
   

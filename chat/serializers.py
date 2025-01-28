@@ -1,0 +1,42 @@
+from rest_framework import serializers
+from .models import ChatRoom, Message
+
+
+class ChatRoomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChatRoom
+        fields = ['id', 'user', 'staff', 'status', 'created_at']
+
+
+class CreateChatRoomSerializer(serializers.Serializer):
+    def save(self, **kwargs):
+        user_id = self.context['user_id']
+        chatroom = ChatRoom.objects.create(user_id=user_id)
+        return chatroom
+
+
+class MessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Message
+        fields = ['id', 'chat_room', 'sender', 'content', 'message_type', 'file']
+        
+        
+class CreateMessageSerializer(serializers.Serializer):
+    chat_room = serializers.PrimaryKeyRelatedField(queryset=ChatRoom.objects.all())
+    content = serializers.CharField(required=False, allow_blank=True)
+    file = serializers.FileField(required=False)
+
+    def save(self, **kwargs):
+        sender = self.context['sender']  # Expecting a User instance, not an ID
+        chat_room = self.validated_data.get('chat_room')
+        content = self.validated_data.get('content', '')
+        file = self.validated_data.get('file', None)
+
+        # Create the message with all the fields
+        message = Message.objects.create(
+            sender=sender,
+            chat_room=chat_room,
+            content=content,
+            file=file
+        )
+        return message
