@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
@@ -27,24 +28,26 @@ class ChatRoomViewSet(viewsets.ModelViewSet):
             return ChatRoom.objects.all()
         return ChatRoom.objects.filter(user=user)
 
-
 class MessageViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = MessageSerializer
     queryset = Message.objects.all()
-    
+
     def create(self, request, *args, **kwargs):
         chatroom_id = kwargs.get('chatroom_pk')
 
-        # Validate chat room existence
+        # Validate that the chat room exists
         try:
             chat_room = ChatRoom.objects.get(id=chatroom_id)
         except ChatRoom.DoesNotExist:
-            return Response({"detail": "ChatRoom not found."}, status=404)
+            return Response({"detail": "ChatRoom not found."}, status=status.HTTP_404_NOT_FOUND)
 
+        # Use CreateMessageSerializer to validate incoming data
         serializer = CreateMessageSerializer(
             data=request.data, context={'sender': request.user}
         )
         serializer.is_valid(raise_exception=True)
+
+        # Save the message and return the response
         message = serializer.save()
-        return Response(MessageSerializer(message).data, status=201)
+        return Response(MessageSerializer(message).data, status=status.HTTP_201_CREATED)

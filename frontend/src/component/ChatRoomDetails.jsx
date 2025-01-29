@@ -10,6 +10,7 @@ const ChatRoomDetail = () => {
   const [error, setError] = useState(null);
   const [chatPartner, setChatPartner] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
+  const [newMessage, setNewMessage] = useState(""); // To track new message input
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -25,8 +26,8 @@ const ChatRoomDetail = () => {
 
     const fetchCurrentUser = async () => {
       try {
-        const response = await AxiosInstance.get("/auth/users/"); // Updated API endpoint
-        setCurrentUser(response.data[0]); // Assuming you're picking the first user or modifying logic as needed
+        const response = await AxiosInstance.get("/auth/users/");
+        setCurrentUser(response.data[0]); // Assuming you're picking the first user
       } catch (error) {
         setError("Error fetching user data: " + error.message);
       }
@@ -83,20 +84,39 @@ const ChatRoomDetail = () => {
     return <div className="message-file"><a href={file} target="_blank" rel="noopener noreferrer">Download File</a></div>;
   };
 
+  // Handle sending the message
+  const handleSendMessage = async (e) => {
+    e.preventDefault(); // Prevent the page from reloading
+    if (!newMessage.trim()) return; // Prevent sending empty messages
+
+    const messageData = {
+      chat_room: chatRoomId,
+      content: newMessage,
+    };
+
+    try {
+      const response = await AxiosInstance.post(`chat/chatrooms/${chatRoomId}/messages/`, messageData);
+      setMessages([...messages, response.data]); // Add new message to state
+      setNewMessage(""); // Clear input field after sending
+    } catch (error) {
+      setError("Error sending message: " + error.message);
+    }
+  };
+
   if (loading) return <div className="loading">Loading...</div>;
   if (error) return <div className="error">{error}</div>;
 
   return (
     <div className="chatroom-container">
-      <h1 className="chatroom-title">Chat with {chatPartner}</h1>
+      <h1 className="chatroom-title">{chatPartner}</h1>
       <div className="messages-container">
         {Object.keys(groupedMessages).map((date) => (
           <div key={date} className="date-group">
             <div className="date-header">{date}</div>
             <ul className="messages-list">
               {groupedMessages[date].map((message) => (
-                <li key={message.id} className="message">
-                  <div className="message-sender">{message.sender}</div>
+                <li key={message.id} className={`message ${message.sender === currentUser.username ? "sent" : "received"}`}>
+                  
                   <div className="message-content">{message.content}</div>
                   {renderMedia(message.file)}
                   <div className="message-timestamp">{formatTime(message.timestamp)}</div>
@@ -106,6 +126,17 @@ const ChatRoomDetail = () => {
           </div>
         ))}
       </div>
+
+      {/* Message Input Form */}
+      <form onSubmit={handleSendMessage} className="message-input-container">
+        <input
+          type="text"
+          value={newMessage}
+          onChange={(e) => setNewMessage(e.target.value)}
+          placeholder="Type a message..."
+        />
+        <button type="submit">Send</button>
+      </form>
     </div>
   );
 };
