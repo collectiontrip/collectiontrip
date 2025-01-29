@@ -16,9 +16,11 @@ class CreateChatRoomSerializer(serializers.Serializer):
 
 
 class MessageSerializer(serializers.ModelSerializer):
+    sender = serializers.CharField(source="sender.username", read_only=True)  # Fetch username
+
     class Meta:
         model = Message
-        fields = ['id', 'chat_room', 'sender', 'content', 'message_type', 'file']
+        fields = ['id', 'chat_room', 'sender', 'content', 'message_type', 'file', 'timestamp']
         
         
 class CreateMessageSerializer(serializers.Serializer):

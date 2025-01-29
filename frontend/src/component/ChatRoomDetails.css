@@ -1,0 +1,124 @@
+/* ChatRoomDetail.css */
+
+.chatroom-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .chatroom-title {
+    text-align: center;
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  
+  .messages-container {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Date grouping */
+  .date-group {
+    margin-top: 20px;
+  }
+  
+  .date-header {
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: #555;
+    padding: 5px 0;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  /* Message Styling */
+  .messages-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .message {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    background: #e9ecef;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .message-sender {
+    font-weight: bold;
+    color: #007bff;
+  }
+  
+  .message-content {
+    margin-top: 5px;
+    color: #333;
+  }
+  
+  /* Timestamp Styling */
+  .message-timestamp {
+    text-align: right;
+    font-size: 12px;
+    color: #888;
+    margin-top: 5px;
+  }
+  
+  /* Image Styling */
+  .message-image img {
+    max-width: 100%;
+    border-radius: 5px;
+    margin-top: 10px;
+    display: block;
+  }
+  
+  /* Audio Styling */
+  .message-audio audio {
+    width: 100%;
+    margin-top: 10px;
+  }
+  
+  /* Video Styling */
+  .message-video video {
+    max-width: 100%;
+    border-radius: 5px;
+    margin-top: 10px;
+    display: block;
+  }
+  
+  /* File Download Styling */
+  .message-file a {
+    display: inline-block;
+    margin-top: 10px;
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .message-file a:hover {
+    text-decoration: underline;
+  }
+  
+  .loading {
+    text-align: center;
+    font-size: 18px;
+    color: #007bff;
+  }
+  
+  .error {
+    text-align: center;
+    color: red;
+    font-weight: bold;
+  }
+  
+  .no-messages {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+  }
+  
