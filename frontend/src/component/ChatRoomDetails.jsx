@@ -4,21 +4,32 @@ import AxiosInstance from "./Auth/AxiosInstance";
 import "./ChatRoomDetails.css";
 
 const ChatRoomDetail = () => {
-  const { chatRoomId } = useParams();
+  const { chatroom_id } = useParams();
+  console.log("Chatroom ID:", chatroom_id); // Debugging
+
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [chatPartner, setChatPartner] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
-  const [newMessage, setNewMessage] = useState(""); // To track new message input
+  const [newMessage, setNewMessage] = useState(""); // New message input
+  const [mediaFile, setMediaFile] = useState(null); // Media file storage
 
   useEffect(() => {
+    if (!chatroom_id) {
+      setError("Invalid chatroom ID");
+      setLoading(false);
+      return;
+    }
+
     const fetchMessages = async () => {
       try {
-        const response = await AxiosInstance.get(`chat/chatrooms/${chatRoomId}/messages`);
-        setMessages(response.data);
+        const response = await AxiosInstance.get(`chat/chatrooms/${chatroom_id}/messages`);
+        console.log("Fetched Messages:", response.data); // Debugging
+        setMessages(response.data || []);
       } catch (error) {
-        setError("Error while fetching messages: " + error.message);
+        console.error("Error fetching messages:", error);
+        setError("Error fetching messages: " + error.message);
       } finally {
         setLoading(false);
       }
@@ -27,15 +38,21 @@ const ChatRoomDetail = () => {
     const fetchCurrentUser = async () => {
       try {
         const response = await AxiosInstance.get("/auth/users/");
-        setCurrentUser(response.data[0]); // Assuming you're picking the first user
+        console.log("Fetched User:", response.data); // Debugging
+        if (response.data.length > 0) {
+          setCurrentUser(response.data[0]); // Assuming first user
+        } else {
+          setError("No user found");
+        }
       } catch (error) {
-        setError("Error fetching user data: " + error.message);
+        console.error("Error fetching user:", error);
+        setError("Error fetching user: " + error.message);
       }
     };
 
     fetchMessages();
     fetchCurrentUser();
-  }, [chatRoomId]);
+  }, [chatroom_id]);
 
   useEffect(() => {
     if (currentUser && messages.length > 0) {
@@ -46,13 +63,18 @@ const ChatRoomDetail = () => {
   }, [currentUser, messages]);
 
   const formatTime = (timestamp) => {
-    const date = new Date(timestamp);
-    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    if (!timestamp) return "Unknown Time";
+    return new Date(timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
   const formatDate = (timestamp) => {
-    const date = new Date(timestamp);
-    return date.toLocaleDateString([], { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+    if (!timestamp) return "Unknown Date";
+    return new Date(timestamp).toLocaleDateString([], {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
   };
 
   const groupMessagesByDate = (messages) => {
@@ -84,22 +106,37 @@ const ChatRoomDetail = () => {
     return <div className="message-file"><a href={file} target="_blank" rel="noopener noreferrer">Download File</a></div>;
   };
 
-  // Handle sending the message
   const handleSendMessage = async (e) => {
-    e.preventDefault(); // Prevent the page from reloading
-    if (!newMessage.trim()) return; // Prevent sending empty messages
+    e.preventDefault();
+    if (!newMessage.trim() && !mediaFile) return;
 
-    const messageData = {
-      chat_room: chatRoomId,
-      content: newMessage,
-    };
+    const formData = new FormData();
+    formData.append("chat_room", chatroom_id);
+    formData.append("content", newMessage);
+    if (mediaFile) {
+      formData.append("file", mediaFile);
+    }
 
     try {
-      const response = await AxiosInstance.post(`chat/chatrooms/${chatRoomId}/messages/`, messageData);
-      setMessages([...messages, response.data]); // Add new message to state
-      setNewMessage(""); // Clear input field after sending
+      const response = await AxiosInstance.post(`chat/chatrooms/${chatroom_id}/messages/`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log("Message Sent:", response.data); // Debugging
+      setMessages([...messages, response.data]);
+      setNewMessage("");
+      setMediaFile(null);
     } catch (error) {
+      console.error("Error sending message:", error);
       setError("Error sending message: " + error.message);
+    }
+  };
+
+  const handleMediaChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setMediaFile(file);
     }
   };
 
@@ -110,21 +147,24 @@ const ChatRoomDetail = () => {
     <div className="chatroom-container">
       <h1 className="chatroom-title">{chatPartner}</h1>
       <div className="messages-container">
-        {Object.keys(groupedMessages).map((date) => (
-          <div key={date} className="date-group">
-            <div className="date-header">{date}</div>
-            <ul className="messages-list">
-              {groupedMessages[date].map((message) => (
-                <li key={message.id} className={`message ${message.sender === currentUser.username ? "sent" : "received"}`}>
-                  
-                  <div className="message-content">{message.content}</div>
-                  {renderMedia(message.file)}
-                  <div className="message-timestamp">{formatTime(message.timestamp)}</div>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+        {messages.length === 0 ? (
+          <p className="no-messages">No messages yet</p>
+        ) : (
+          Object.keys(groupedMessages).map((date) => (
+            <div key={date} className="date-group">
+              <div className="date-header">{date}</div>
+              <ul className="messages-list">
+                {groupedMessages[date].map((message) => (
+                  <li key={message.id} className={`message ${message.sender === currentUser?.username ? "sent" : "received"}`}>
+                    <div className="message-content">{message.content || "No content"}</div>
+                    {renderMedia(message.file)}
+                    <div className="message-timestamp">{formatTime(message.timestamp)}</div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        )}
       </div>
 
       {/* Message Input Form */}
@@ -134,6 +174,11 @@ const ChatRoomDetail = () => {
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder="Type a message..."
+        />
+        <input
+          type="file"
+          onChange={handleMediaChange}
+          accept="image/*,audio/*,video/*"
         />
         <button type="submit">Send</button>
       </form>

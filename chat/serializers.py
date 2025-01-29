@@ -21,34 +21,30 @@ class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
         fields = ['id', 'chat_room', 'sender', 'content', 'message_type', 'file', 'timestamp']
-        
+
+
 class CreateMessageSerializer(serializers.Serializer):
-    chat_room = serializers.PrimaryKeyRelatedField(queryset=ChatRoom.objects.all())
     content = serializers.CharField(required=False, allow_blank=True)
     file = serializers.FileField(required=False)
 
     def validate(self, data):
-        # Ensure that at least one of content or file is provided
         if not data.get('content') and not data.get('file'):
             raise serializers.ValidationError("At least content or file is required.")
-        
-        # Optionally, validate file types if a file is provided
+
         file = data.get('file')
         if file:
             file_extension = file.name.split(".")[-1].lower()
             allowed_extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'mp3', 'wav', 'ogg', 'mp4', 'webm', 'ogg']
             if file_extension not in allowed_extensions:
                 raise serializers.ValidationError("Unsupported file type.")
-        
         return data
 
     def save(self, **kwargs):
-        sender = self.context['sender']  # Expecting a User instance
-        chat_room = self.validated_data.get('chat_room')
+        sender = self.context['sender']
+        chat_room = self.context['chat_room']
         content = self.validated_data.get('content', '')
         file = self.validated_data.get('file', None)
 
-        # Create and return the message instance
         message = Message.objects.create(
             sender=sender,
             chat_room=chat_room,
@@ -56,3 +52,4 @@ class CreateMessageSerializer(serializers.Serializer):
             file=file
         )
         return message
+

@@ -3,7 +3,7 @@
   display: flex;
   flex-direction: column;
   padding: 20px;
-  width: 90%;
+  max-width: 95%;
   margin: 0 auto;
   background-color: #f9f9f9;
   border-radius: 8px;
@@ -160,6 +160,38 @@
 
 .message-input-container button:hover {
   background-color: #0056b3;
+}
+
+/* Media Picker */
+.media-picker-container {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.media-picker-container input[type="file"] {
+  display: none;
+}
+
+.media-picker-container label {
+  padding: 8px 12px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.media-picker-container label:hover {
+  background-color: #0056b3;
+}
+
+.media-picker-container .file-info {
+  font-size: 14px;
+  color: #555;
+  display: block;
+  margin-top: 5px;
 }
 
 /* Loading and Error Messages */

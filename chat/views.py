@@ -27,27 +27,23 @@ class ChatRoomViewSet(viewsets.ModelViewSet):
         if user.is_staff:
             return ChatRoom.objects.all()
         return ChatRoom.objects.filter(user=user)
-
+    
 class MessageViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = MessageSerializer
     queryset = Message.objects.all()
 
     def create(self, request, *args, **kwargs):
-        chatroom_id = kwargs.get('chatroom_pk')
-
-        # Validate that the chat room exists
+        chatroom_id = request.data.get('chat_room')
         try:
             chat_room = ChatRoom.objects.get(id=chatroom_id)
         except ChatRoom.DoesNotExist:
             return Response({"detail": "ChatRoom not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        # Use CreateMessageSerializer to validate incoming data
         serializer = CreateMessageSerializer(
-            data=request.data, context={'sender': request.user}
+            data=request.data,
+            context={'sender': request.user, 'chat_room': chat_room}
         )
         serializer.is_valid(raise_exception=True)
-
-        # Save the message and return the response
         message = serializer.save()
         return Response(MessageSerializer(message).data, status=status.HTTP_201_CREATED)

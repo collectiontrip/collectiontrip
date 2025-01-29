@@ -34,7 +34,7 @@ function App() {
           <Route path="/user/orders" element={<Orders />} />
           <Route path="/collections" element={<CollectionList />} />
           <Route path="/chatroom" element={<ChatroomList />} />
-          <Route path="/chatroom/:id" element={<ChatRoomDetail />} /> {/* Added route for ChatRoomDetail */}
+          <Route path="/chatroom/:chatroom_id" element={<ChatRoomDetail />} /> {/* Added route for ChatRoomDetail */}
         </Routes>
       </div>
     </Router>
