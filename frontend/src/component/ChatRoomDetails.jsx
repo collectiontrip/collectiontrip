@@ -8,6 +8,8 @@ const ChatRoomDetail = () => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [chatPartner, setChatPartner] = useState("");
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -20,22 +22,38 @@ const ChatRoomDetail = () => {
         setLoading(false);
       }
     };
+
+    const fetchCurrentUser = async () => {
+      try {
+        const response = await AxiosInstance.get("/auth/users/"); // Updated API endpoint
+        setCurrentUser(response.data[0]); // Assuming you're picking the first user or modifying logic as needed
+      } catch (error) {
+        setError("Error fetching user data: " + error.message);
+      }
+    };
+
     fetchMessages();
+    fetchCurrentUser();
   }, [chatRoomId]);
 
-  // Function to format timestamp to readable time
+  useEffect(() => {
+    if (currentUser && messages.length > 0) {
+      const uniqueUsers = [...new Set(messages.map(msg => msg.sender))];
+      const otherUser = uniqueUsers.find(user => user !== currentUser.username);
+      setChatPartner(otherUser || "Unknown");
+    }
+  }, [currentUser, messages]);
+
   const formatTime = (timestamp) => {
     const date = new Date(timestamp);
     return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
-  // Function to format timestamp to readable date
   const formatDate = (timestamp) => {
     const date = new Date(timestamp);
     return date.toLocaleDateString([], { weekday: "long", day: "numeric", month: "long", year: "numeric" });
   };
 
-  // Group messages by date
   const groupMessagesByDate = (messages) => {
     return messages.reduce((groups, message) => {
       const date = formatDate(message.timestamp);
@@ -54,42 +72,15 @@ const ChatRoomDetail = () => {
     const fileExtension = file.split(".").pop().toLowerCase();
 
     if (["jpg", "jpeg", "png", "gif", "webp"].includes(fileExtension)) {
-      return (
-        <div className="message-image">
-          <img src={file} alt="Uploaded content" />
-        </div>
-      );
+      return <div className="message-image"><img src={file} alt="Uploaded content" /></div>;
     }
-
     if (["mp3", "wav", "ogg"].includes(fileExtension)) {
-      return (
-        <div className="message-audio">
-          <audio controls>
-            <source src={file} type={`audio/${fileExtension}`} />
-            Your browser does not support the audio element.
-          </audio>
-        </div>
-      );
+      return <div className="message-audio"><audio controls><source src={file} type={`audio/${fileExtension}`} /></audio></div>;
     }
-
     if (["mp4", "webm", "ogg"].includes(fileExtension)) {
-      return (
-        <div className="message-video">
-          <video controls>
-            <source src={file} type={`video/${fileExtension}`} />
-            Your browser does not support the video tag.
-          </video>
-        </div>
-      );
+      return <div className="message-video"><video controls><source src={file} type={`video/${fileExtension}`} /></video></div>;
     }
-
-    return (
-      <div className="message-file">
-        <a href={file} target="_blank" rel="noopener noreferrer">
-          Download File
-        </a>
-      </div>
-    );
+    return <div className="message-file"><a href={file} target="_blank" rel="noopener noreferrer">Download File</a></div>;
   };
 
   if (loading) return <div className="loading">Loading...</div>;
@@ -97,8 +88,7 @@ const ChatRoomDetail = () => {
 
   return (
     <div className="chatroom-container">
-      <h1 className="chatroom-title">Chatroom {chatRoomId}</h1>
-
+      <h1 className="chatroom-title">Chat with {chatPartner}</h1>
       <div className="messages-container">
         {Object.keys(groupedMessages).map((date) => (
           <div key={date} className="date-group">
