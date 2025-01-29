@@ -37,9 +37,9 @@ const Navbar = ({ isAuthenticated, setIsAuthenticated }) => {
   return (
     <nav className="navbar">
       <div className="nav-links">
-      <Link to={`/carts/${localStorage.getItem('cartId') || 'default'}`} className="nav-link">
-        Cart
-      </Link> 
+        <Link to={`/carts/${localStorage.getItem('cartId') || 'default'}`} className="nav-link">
+          Cart
+        </Link> 
         {!isAuthenticated ? (
           <>
             <Link to="/user/signin" className="nav-link">Sign In</Link>
@@ -53,6 +53,8 @@ const Navbar = ({ isAuthenticated, setIsAuthenticated }) => {
             <button onClick={handleLogout} className="logout-button">Logout</button>
           </>
         )}
+        {/* Chat Button */}
+        <Link to="/chatroom" className="nav-link chat-button">Chat</Link>
       </div>
     </nav>
   );
