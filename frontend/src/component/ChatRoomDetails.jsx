@@ -24,7 +24,8 @@ const ChatRoomDetail = () => {
 
     const fetchMessages = async () => {
       try {
-        const response = await AxiosInstance.get(`chat/chatrooms/${chatroom_id}/messages`);
+        const response = await AxiosInstance.get(`/chat/chatrooms/${chatroom_id}/messages?chat_room=${chatroom_id}`);
+
         console.log("Fetched Messages:", response.data); // Debugging
         setMessages(response.data || []);
       } catch (error) {

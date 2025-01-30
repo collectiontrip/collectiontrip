@@ -27,11 +27,16 @@ class ChatRoomViewSet(viewsets.ModelViewSet):
         if user.is_staff:
             return ChatRoom.objects.all()
         return ChatRoom.objects.filter(user=user)
-    
+  
 class MessageViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = MessageSerializer
-    queryset = Message.objects.all()
+    
+    def get_queryset(self):
+        chat_room_id = self.request.query_params.get('chat_room')
+        if chat_room_id:
+            return Message.objects.filter(chat_room_id=chat_room_id)
+        return Message.objects.all()
 
     def create(self, request, *args, **kwargs):
         chatroom_id = request.data.get('chat_room')
