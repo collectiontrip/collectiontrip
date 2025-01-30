@@ -21,8 +21,7 @@ class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
         fields = ['id', 'chat_room', 'sender', 'content', 'message_type', 'file', 'timestamp']
-
-
+        
 class CreateMessageSerializer(serializers.Serializer):
     content = serializers.CharField(required=False, allow_blank=True)
     file = serializers.FileField(required=False)
@@ -34,7 +33,7 @@ class CreateMessageSerializer(serializers.Serializer):
         file = data.get('file')
         if file:
             file_extension = file.name.split(".")[-1].lower()
-            allowed_extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'mp3', 'wav', 'ogg', 'mp4', 'webm', 'ogg']
+            allowed_extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'mp3', 'wav', 'ogg', 'mp4', 'webm']
             if file_extension not in allowed_extensions:
                 raise serializers.ValidationError("Unsupported file type.")
         return data
@@ -52,4 +51,3 @@ class CreateMessageSerializer(serializers.Serializer):
             file=file
         )
         return message
-
