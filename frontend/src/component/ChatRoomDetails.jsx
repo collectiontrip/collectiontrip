@@ -2,8 +2,8 @@ import { useParams } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import AxiosInstance from "./Auth/AxiosInstance";
 import Picker from "@emoji-mart/react";
-import data from "@emoji-mart/data";
-import GiphySearchBox from "react-giphy-searchbox";
+
+
 import "./ChatRoomDetails.css";
 
 const ChatRoomDetail = () => {
@@ -18,7 +18,6 @@ const ChatRoomDetail = () => {
   const [newMessage, setNewMessage] = useState("");
   const [mediaFile, setMediaFile] = useState(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [selectedGif, setSelectedGif] = useState(null);
 
   useEffect(() => {
     if (!chatroom_id) {
@@ -160,7 +159,6 @@ const ChatRoomDetail = () => {
       setMessages([...messages, response.data]);
       setNewMessage("");
       setMediaFile(null);
-      setSelectedGif(null); // Reset selected GIF after sending
     } catch (error) {
       console.error("Error sending message:", error);
       setError("Error sending message: " + error.message);
@@ -176,11 +174,6 @@ const ChatRoomDetail = () => {
 
   const addEmoji = (emoji) => {
     setNewMessage((prevMessage) => prevMessage + emoji.native);
-  };
-
-  const handleGifSelect = (gif) => {
-    setSelectedGif(gif); // Store the selected GIF
-    setNewMessage(gif.url); // Set the GIF URL in the message input
   };
 
   if (loading) return <div className="loading">Loading...</div>;
@@ -200,9 +193,7 @@ const ChatRoomDetail = () => {
                 {groupedMessages[date].map((message) => (
                   <li
                     key={message.id}
-                    className={`message ${
-                      message.sender === currentUser?.username ? "sent" : "received"
-                    }`}
+                    className={`message ${message.sender === currentUser?.username ? "sent" : "received"}`}
                   >
                     <div className="message-content">
                       {message.content || "No content"}
@@ -219,17 +210,7 @@ const ChatRoomDetail = () => {
 
       {/* Emoji Picker */}
       {showEmojiPicker && (
-        <Picker data={data} onEmojiSelect={addEmoji} />
-      )}
-
-      {/* GIF Picker */}
-      {showGifPicker && (
-        <div className="gif-picker">
-          <GiphySearchBox
-            onSelect={handleGifSelect}
-            apiKey="YOUR_GIPHY_API_KEY"
-          />
-        </div>
+        <Picker onEmojiSelect={addEmoji} />
       )}
 
       {/* Message Input Form */}
@@ -242,9 +223,6 @@ const ChatRoomDetail = () => {
         />
         <button type="button" onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
           😀
-        </button>
-        <button type="button" onClick={() => setShowGifPicker(!showGifPicker)}>
-          📷
         </button>
         <input type="file" onChange={handleMediaChange} accept="image/*,audio/*,video/*,image/gif" />
         <button type="submit">Send</button>
