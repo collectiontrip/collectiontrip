@@ -1,6 +1,9 @@
 import { useParams } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import AxiosInstance from "./Auth/AxiosInstance";
+import Picker from "@emoji-mart/react";
+import data from "@emoji-mart/data";
+import GiphySearchBox from "react-giphy-searchbox";
 import "./ChatRoomDetails.css";
 
 const ChatRoomDetail = () => {
@@ -12,8 +15,10 @@ const ChatRoomDetail = () => {
   const [error, setError] = useState(null);
   const [chatPartner, setChatPartner] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
-  const [newMessage, setNewMessage] = useState(""); // New message input
-  const [mediaFile, setMediaFile] = useState(null); // Media file storage
+  const [newMessage, setNewMessage] = useState("");
+  const [mediaFile, setMediaFile] = useState(null);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [selectedGif, setSelectedGif] = useState(null);
 
   useEffect(() => {
     if (!chatroom_id) {
@@ -24,9 +29,10 @@ const ChatRoomDetail = () => {
 
     const fetchMessages = async () => {
       try {
-        const response = await AxiosInstance.get(`/chat/chatrooms/${chatroom_id}/messages?chat_room=${chatroom_id}`);
-
-        console.log("Fetched Messages:", response.data); // Debugging
+        const response = await AxiosInstance.get(
+          `/chat/chatrooms/${chatroom_id}/messages?chat_room=${chatroom_id}`
+        );
+        console.log("Fetched Messages:", response.data);
         setMessages(response.data || []);
       } catch (error) {
         console.error("Error fetching messages:", error);
@@ -39,9 +45,9 @@ const ChatRoomDetail = () => {
     const fetchCurrentUser = async () => {
       try {
         const response = await AxiosInstance.get("/auth/users/");
-        console.log("Fetched User:", response.data); // Debugging
+        console.log("Fetched User:", response.data);
         if (response.data.length > 0) {
-          setCurrentUser(response.data[0]); // Assuming first user
+          setCurrentUser(response.data[0]);
         } else {
           setError("No user found");
         }
@@ -57,8 +63,8 @@ const ChatRoomDetail = () => {
 
   useEffect(() => {
     if (currentUser && messages.length > 0) {
-      const uniqueUsers = [...new Set(messages.map(msg => msg.sender))];
-      const otherUser = uniqueUsers.find(user => user !== currentUser.username);
+      const uniqueUsers = [...new Set(messages.map((msg) => msg.sender))];
+      const otherUser = uniqueUsers.find((user) => user !== currentUser.username);
       setChatPartner(otherUser || "Unknown");
     }
   }, [currentUser, messages]);
@@ -96,15 +102,37 @@ const ChatRoomDetail = () => {
     const fileExtension = file.split(".").pop().toLowerCase();
 
     if (["jpg", "jpeg", "png", "gif", "webp"].includes(fileExtension)) {
-      return <div className="message-image"><img src={file} alt="Uploaded content" /></div>;
+      return (
+        <div className="message-image">
+          <img src={file} alt="Uploaded content" />
+        </div>
+      );
     }
     if (["mp3", "wav", "ogg"].includes(fileExtension)) {
-      return <div className="message-audio"><audio controls><source src={file} type={`audio/${fileExtension}`} /></audio></div>;
+      return (
+        <div className="message-audio">
+          <audio controls>
+            <source src={file} type={`audio/${fileExtension}`} />
+          </audio>
+        </div>
+      );
     }
     if (["mp4", "webm", "ogg"].includes(fileExtension)) {
-      return <div className="message-video"><video controls><source src={file} type={`video/${fileExtension}`} /></video></div>;
+      return (
+        <div className="message-video">
+          <video controls>
+            <source src={file} type={`video/${fileExtension}`} />
+          </video>
+        </div>
+      );
     }
-    return <div className="message-file"><a href={file} target="_blank" rel="noopener noreferrer">Download File</a></div>;
+    return (
+      <div className="message-file">
+        <a href={file} target="_blank" rel="noopener noreferrer">
+          Download File
+        </a>
+      </div>
+    );
   };
 
   const handleSendMessage = async (e) => {
@@ -119,15 +147,20 @@ const ChatRoomDetail = () => {
     }
 
     try {
-      const response = await AxiosInstance.post(`chat/chatrooms/${chatroom_id}/messages/`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      console.log("Message Sent:", response.data); // Debugging
+      const response = await AxiosInstance.post(
+        `chat/chatrooms/${chatroom_id}/messages/`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log("Message Sent:", response.data);
       setMessages([...messages, response.data]);
       setNewMessage("");
       setMediaFile(null);
+      setSelectedGif(null); // Reset selected GIF after sending
     } catch (error) {
       console.error("Error sending message:", error);
       setError("Error sending message: " + error.message);
@@ -139,6 +172,15 @@ const ChatRoomDetail = () => {
     if (file) {
       setMediaFile(file);
     }
+  };
+
+  const addEmoji = (emoji) => {
+    setNewMessage((prevMessage) => prevMessage + emoji.native);
+  };
+
+  const handleGifSelect = (gif) => {
+    setSelectedGif(gif); // Store the selected GIF
+    setNewMessage(gif.url); // Set the GIF URL in the message input
   };
 
   if (loading) return <div className="loading">Loading...</div>;
@@ -156,8 +198,15 @@ const ChatRoomDetail = () => {
               <div className="date-header">{date}</div>
               <ul className="messages-list">
                 {groupedMessages[date].map((message) => (
-                  <li key={message.id} className={`message ${message.sender === currentUser?.username ? "sent" : "received"}`}>
-                    <div className="message-content">{message.content || "No content"}</div>
+                  <li
+                    key={message.id}
+                    className={`message ${
+                      message.sender === currentUser?.username ? "sent" : "received"
+                    }`}
+                  >
+                    <div className="message-content">
+                      {message.content || "No content"}
+                    </div>
                     {renderMedia(message.file)}
                     <div className="message-timestamp">{formatTime(message.timestamp)}</div>
                   </li>
@@ -168,6 +217,21 @@ const ChatRoomDetail = () => {
         )}
       </div>
 
+      {/* Emoji Picker */}
+      {showEmojiPicker && (
+        <Picker data={data} onEmojiSelect={addEmoji} />
+      )}
+
+      {/* GIF Picker */}
+      {showGifPicker && (
+        <div className="gif-picker">
+          <GiphySearchBox
+            onSelect={handleGifSelect}
+            apiKey="YOUR_GIPHY_API_KEY"
+          />
+        </div>
+      )}
+
       {/* Message Input Form */}
       <form onSubmit={handleSendMessage} className="message-input-container">
         <input
@@ -176,11 +240,13 @@ const ChatRoomDetail = () => {
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder="Type a message..."
         />
-        <input
-          type="file"
-          onChange={handleMediaChange}
-          accept="image/*,audio/*,video/*"
-        />
+        <button type="button" onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
+          😀
+        </button>
+        <button type="button" onClick={() => setShowGifPicker(!showGifPicker)}>
+          📷
+        </button>
+        <input type="file" onChange={handleMediaChange} accept="image/*,audio/*,video/*,image/gif" />
         <button type="submit">Send</button>
       </form>
     </div>
