@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import AxiosInstance from "./Auth/AxiosInstance";
 import Picker from "@emoji-mart/react";
 
-
 import "./ChatRoomDetails.css";
 
 const ChatRoomDetail = () => {
@@ -18,6 +17,9 @@ const ChatRoomDetail = () => {
   const [newMessage, setNewMessage] = useState("");
   const [mediaFile, setMediaFile] = useState(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
+  // Backend base URL (adjust based on your setup)
+  const backendBaseURL = "http://localhost:8000";
 
   useEffect(() => {
     if (!chatroom_id) {
@@ -96,8 +98,11 @@ const ChatRoomDetail = () => {
 
   const groupedMessages = groupMessagesByDate(messages);
 
-  const renderMedia = (file) => {
-    if (!file) return null;
+  const renderMedia = (fileUrl) => {
+    if (!fileUrl) return null;
+
+    // Ensure the URL is absolute
+    const file = fileUrl.startsWith("http") ? fileUrl : `${backendBaseURL}${fileUrl}`;
     const fileExtension = file.split(".").pop().toLowerCase();
 
     if (["jpg", "jpeg", "png", "gif", "webp"].includes(fileExtension)) {
@@ -119,7 +124,7 @@ const ChatRoomDetail = () => {
     if (["mp4", "webm", "ogg"].includes(fileExtension)) {
       return (
         <div className="message-video">
-          <video controls>
+          <video controls width="300">
             <source src={file} type={`video/${fileExtension}`} />
           </video>
         </div>
@@ -196,7 +201,7 @@ const ChatRoomDetail = () => {
                     className={`message ${message.sender === currentUser?.username ? "sent" : "received"}`}
                   >
                     <div className="message-content">
-                      {message.content || "No content"}
+                      {message.content }
                     </div>
                     {renderMedia(message.file)}
                     <div className="message-timestamp">{formatTime(message.timestamp)}</div>
@@ -209,9 +214,7 @@ const ChatRoomDetail = () => {
       </div>
 
       {/* Emoji Picker */}
-      {showEmojiPicker && (
-        <Picker onEmojiSelect={addEmoji} />
-      )}
+      {showEmojiPicker && <Picker onEmojiSelect={addEmoji} />}
 
       {/* Message Input Form */}
       <form onSubmit={handleSendMessage} className="message-input-container">
@@ -221,9 +224,7 @@ const ChatRoomDetail = () => {
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder="Type a message..."
         />
-        <button type="button" onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
-          😀
-        </button>
+        <button type="button" onClick={() => setShowEmojiPicker(!showEmojiPicker)}>😀</button>
         <input type="file" onChange={handleMediaChange} accept="image/*,audio/*,video/*,image/gif" />
         <button type="submit">Send</button>
       </form>
