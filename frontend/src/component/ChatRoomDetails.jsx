@@ -2,12 +2,11 @@ import { useParams } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import AxiosInstance from "./Auth/AxiosInstance";
 import Picker from "@emoji-mart/react";
-
 import "./ChatRoomDetails.css";
 
 const ChatRoomDetail = () => {
   const { chatroom_id } = useParams();
-  console.log("Chatroom ID:", chatroom_id); // Debugging
+  console.log("Chatroom ID:", chatroom_id);
 
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,8 +16,8 @@ const ChatRoomDetail = () => {
   const [newMessage, setNewMessage] = useState("");
   const [mediaFile, setMediaFile] = useState(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [socket, setSocket] = useState(null);
 
-  // Backend base URL (adjust based on your setup)
   const backendBaseURL = "http://localhost:8000";
 
   useEffect(() => {
@@ -60,6 +59,40 @@ const ChatRoomDetail = () => {
 
     fetchMessages();
     fetchCurrentUser();
+
+    // WebSocket connection for real-time chat
+    const ws = new WebSocket(`ws://${window.location.host}/ws/chat/${chatroom_id}/`);
+    setSocket(ws);
+
+    ws.onopen = () => {
+      console.log("WebSocket connected");
+    };
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === "message") {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            id: data.timestamp,
+            content: data.message,
+            sender: data.sender,
+            timestamp: data.timestamp,
+          },
+        ]);
+      }
+    };
+
+    ws.onclose = () => {
+      console.log("WebSocket disconnected");
+    };
+
+    // Cleanup WebSocket connection on component unmount
+    return () => {
+      if (ws) {
+        ws.close();
+      }
+    };
   }, [chatroom_id]);
 
   useEffect(() => {
@@ -100,8 +133,6 @@ const ChatRoomDetail = () => {
 
   const renderMedia = (fileUrl) => {
     if (!fileUrl) return null;
-
-    // Ensure the URL is absolute
     const file = fileUrl.startsWith("http") ? fileUrl : `${backendBaseURL}${fileUrl}`;
     const fileExtension = file.split(".").pop().toLowerCase();
 
@@ -161,6 +192,17 @@ const ChatRoomDetail = () => {
         }
       );
       console.log("Message Sent:", response.data);
+      // Send the new message via WebSocket
+      if (socket && socket.readyState === WebSocket.OPEN) {
+        socket.send(
+          JSON.stringify({
+            type: "message",
+            message: response.data.content,
+            sender: currentUser.username,
+            timestamp: response.data.timestamp,
+          })
+        );
+      }
       setMessages([...messages, response.data]);
       setNewMessage("");
       setMediaFile(null);
@@ -200,9 +242,7 @@ const ChatRoomDetail = () => {
                     key={message.id}
                     className={`message ${message.sender === currentUser?.username ? "sent" : "received"}`}
                   >
-                    <div className="message-content">
-                      {message.content }
-                    </div>
+                    <div className="message-content">{message.content}</div>
                     {renderMedia(message.file)}
                     <div className="message-timestamp">{formatTime(message.timestamp)}</div>
                   </li>
@@ -224,7 +264,9 @@ const ChatRoomDetail = () => {
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder="Type a message..."
         />
-        <button type="button" onClick={() => setShowEmojiPicker(!showEmojiPicker)}>😀</button>
+        <button type="button" onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
+          😀
+        </button>
         <input type="file" onChange={handleMediaChange} accept="image/*,audio/*,video/*,image/gif" />
         <button type="submit">Send</button>
       </form>
