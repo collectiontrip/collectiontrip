@@ -6,7 +6,7 @@ const AxiosInstance = axios.create({
 
 AxiosInstance.interceptors.request.use(
   (config) => {
-    const accessToken = localStorage.getItem('access_token');
+    const accessToken = localStorage.getItem('accessToken');
     console.log('Access token:', accessToken);
     if (accessToken) {
       config.headers['Authorization'] = `JWT ${accessToken}`;

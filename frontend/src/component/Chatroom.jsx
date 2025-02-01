@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import AxiosInstance from './Auth/AxiosInstance';
+import AxiosInstance from './auth/AxiosInstance';
 import { Link } from 'react-router-dom';
 import './ChatRoom.css';
 

@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import React, { useState, useEffect } from "react";
-import AxiosInstance from "./Auth/AxiosInstance";
+import AxiosInstance from "./auth/AxiosInstance";
 import Picker from "@emoji-mart/react";
 import "./ChatRoomDetails.css";
 
@@ -61,7 +61,11 @@ const ChatRoomDetail = () => {
     fetchCurrentUser();
 
     // WebSocket connection for real-time chat
-    const ws = new WebSocket(`ws://${window.location.host}/ws/chat/${chatroom_id}/`);
+    const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
+    const token = localStorage.getItem("accessToken");
+    const ws = new WebSocket(
+      `${wsProtocol}://localhost:8000/ws/chat/${chatroom_id}/?token=${token}`
+    );
     setSocket(ws);
 
     ws.onopen = () => {
@@ -70,21 +74,27 @@ const ChatRoomDetail = () => {
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      if (data.type === "message") {
+      if (data.type === "chat_message") {  // Match the consumer's event type
         setMessages((prevMessages) => [
           ...prevMessages,
           {
-            id: data.timestamp,
+            id: Date.now(),
             content: data.message,
-            sender: data.sender,
-            timestamp: data.timestamp,
+            sender: data.sender_id,
+            message_type: data.message_type,
+            timestamp: new Date().toISOString(),
+            file: data.file || null,
           },
         ]);
       }
     };
 
-    ws.onclose = () => {
-      console.log("WebSocket disconnected");
+    ws.onclose = (event) => {
+      console.log(`WebSocket closed: ${event.code} - ${event.reason}`);
+    };
+  
+    ws.onerror = (error) => {
+      console.error("WebSocket Error:", error);
     };
 
     // Cleanup WebSocket connection on component unmount
@@ -196,10 +206,9 @@ const ChatRoomDetail = () => {
       if (socket && socket.readyState === WebSocket.OPEN) {
         socket.send(
           JSON.stringify({
-            type: "message",
             message: response.data.content,
-            sender: currentUser.username,
-            timestamp: response.data.timestamp,
+            sender_id: currentUser.id, // Use ID instead of username
+            message_type: response.data.message_type, // Ensure message type is included
           })
         );
       }
