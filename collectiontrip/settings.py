@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django_filters',
     'rest_framework',
     'djoser',
+    'silk',
     'channels',
     'playground',
     'store', 
@@ -75,7 +76,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+   
 ]
+
+if DEBUG:
+    MIDDLEWARE += [ 'silk.middleware.SilkyMiddleware',]
 
 ROOT_URLCONF = 'collectiontrip.urls'
 CORS_ALLOWED_ORIGINS = [
@@ -216,3 +221,5 @@ CELERY_BEAT_SCHEDULE = {
 PAYPAL_CLIENT_ID = 'AZ0Q7_g-iFKRv5HROH8PMIx8viAeJP7GI_1-NkJXHO843GqK9e76gbJiPKAUQKqkl-hDOahQBy8x_bHV'
 PAYPAL_CLIENT_SECRET = 'EO3MjoesZ1SGfTEjsm7c1dnZzgjnj5XssefHmOhB4unMk8-a5ZXT8MjJuO2V6aP2ydBO_kyi6eYN2KJ1'
 PAYPAL_MODE = 'sandbox' 
+
+APPEND_SLASH = False

@@ -63,31 +63,22 @@ const ChatRoomDetail = () => {
     // WebSocket connection for real-time chat
     const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
     const token = localStorage.getItem("accessToken");
-    const ws = new WebSocket(
-      `${wsProtocol}://localhost:8000/ws/chat/${chatroom_id}/?token=${token}`
-    );
+    const wsUrl = `${wsProtocol}://localhost:8000/ws/chat/${chatroom_id}/?token=${token}`;
+
+    const ws = new WebSocket(wsUrl);
+
     setSocket(ws);
+
 
     ws.onopen = () => {
       console.log("WebSocket connected");
     };
 
     ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.type === "chat_message") {  // Match the consumer's event type
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          {
-            id: Date.now(),
-            content: data.message,
-            sender: data.sender_id,
-            message_type: data.message_type,
-            timestamp: new Date().toISOString(),
-            file: data.file || null,
-          },
-        ]);
-      }
+      console.log("Received message:", event.data);
+      // ...
     };
+  
 
     ws.onclose = (event) => {
       console.log(`WebSocket closed: ${event.code} - ${event.reason}`);
@@ -96,7 +87,7 @@ const ChatRoomDetail = () => {
     ws.onerror = (error) => {
       console.error("WebSocket Error:", error);
     };
-
+  
     // Cleanup WebSocket connection on component unmount
     return () => {
       if (ws) {
@@ -104,6 +95,7 @@ const ChatRoomDetail = () => {
       }
     };
   }, [chatroom_id]);
+  
 
   useEffect(() => {
     if (currentUser && messages.length > 0) {

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import "./CollectionList.css"; // Import the new CSS file
 
 const CollectionList = ({ onCollectionSelect }) => {
     const [collections, setCollections] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
-    const [selectedCollectionId, setSelectedCollectionId] = useState(null); // Track selected collection
+    const [selectedCollectionId, setSelectedCollectionId] = useState(null);
 
     useEffect(() => {
         const fetchCollections = async () => {
@@ -24,7 +25,7 @@ const CollectionList = ({ onCollectionSelect }) => {
     }, []);
 
     const handleCollectionClick = (collectionId) => {
-        setSelectedCollectionId(collectionId); // Update the selected collection
+        setSelectedCollectionId(collectionId);
         if (onCollectionSelect) {
             onCollectionSelect(collectionId);
         }
@@ -40,11 +41,12 @@ const CollectionList = ({ onCollectionSelect }) => {
 
     return (
         <div className="collection-container">
-            <div className="collection-list">
+            <h2 className="collection-title">Collections</h2>
+            <div className="collection-grid">
                 {collections.map((collection) => (
                     <div
                         key={collection.id}
-                        className={`collection-item ${selectedCollectionId === collection.id ? 'selected' : ''}`} // Apply 'selected' class
+                        className={`collection-item ${selectedCollectionId === collection.id ? 'selected' : ''}`}
                         onClick={() => handleCollectionClick(collection.id)}
                     >
                         {collection.title}

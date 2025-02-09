@@ -92,62 +92,71 @@ const ProductList = () => {
 
     return (
         <div className="product-list-main-container">
-            <header className="product-list-header">
-                <button className="toggle-collections-btn" onClick={() => setShowCollections(!showCollections)}>
-                    {showCollections ? "Hide Collections" : "Show Collections"}
-                </button>
-                {showCollections && <CollectionList onCollectionSelect={handleCollectionSelect} />}
-                <div className="search-container">
-                    <input
-                        type="text"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        placeholder="Search products..."
-                    />
-                    <button onClick={handleSearch}>Search</button>
-                </div>
-            </header>
+            
+                <header className="product-list-header">
+                    <div className="collection">
+                        <button className="toggle-collections-btn" onClick={() => setShowCollections(!showCollections)}>
+                            {showCollections ? "Hide Collections" : "Show Collections"}
+                        </button>
+                        {showCollections && <CollectionList onCollectionSelect={handleCollectionSelect} />}
+
+                        <div className="search-container">
+                            <input
+                                type="text"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                placeholder="Search products..."
+                            />
+                        <button onClick={handleSearch}>Search</button>
+                        </div>
+                    </div>
+                    <div className="filter-sort-section">
+                        <aside className="product-list-left-container">
+                            <section className="filter-container">
+                                
+                                    <div className="filter-sort">
+                                        <div className="price-filter">
+                                            <input
+                                                type="number"
+                                                value={minPrice}
+                                                onChange={(e) => setMinPrice(e.target.value)}
+                                                placeholder="Min Price"
+                                            />
+                                            <input
+                                                type="number"
+                                                value={maxPrice}
+                                                onChange={(e) => setMaxPrice(e.target.value)}
+                                                placeholder="Max Price"
+                                            />
+                                            <button onClick={handleFilterByPrice}>Filter by Price</button>
+
+                                            
+                                        </div>
+
+                                    <div className="sort-by">
+                                        <select value={sortOrder} onChange={(e) => updateQueryParams({ ordering: e.target.value })}>
+                                            <option value="">Sort By</option>
+                                            <option value="price">Price: Low to High</option>
+                                            <option value="-price">Price: High to Low</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                
+                                
+                            </section>
+                        </aside>
+                    </div>
+                    
+                    
+                    
+                </header>
+            
+            
 
             <main className="product-list-body-container">
                 {/* Filters and Sorting */}
-                <aside className="product-list-left-container">
-                    <section className="filter-container">
-                        <h3>Filters</h3>
-                        <div className="category-filter">
-                            <label>Category</label>
-                            <select onChange={(e) => handleCategorySelect(e.target.value)} value={selectedCategory}>
-                                <option value="">All Categories</option>
-                                {categories.map((category) => (
-                                    <option key={category.id} value={category.id}>
-                                        {category.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="price-filter">
-                            <input
-                                type="number"
-                                value={minPrice}
-                                onChange={(e) => setMinPrice(e.target.value)}
-                                placeholder="Min Price"
-                            />
-                            <input
-                                type="number"
-                                value={maxPrice}
-                                onChange={(e) => setMaxPrice(e.target.value)}
-                                placeholder="Max Price"
-                            />
-                            <button onClick={handleFilterByPrice}>Filter by Price</button>
-                        </div>
-                        <div className="sort-by">
-                            <select value={sortOrder} onChange={(e) => updateQueryParams({ ordering: e.target.value })}>
-                                <option value="">Sort By</option>
-                                <option value="price">Price: Low to High</option>
-                                <option value="-price">Price: High to Low</option>
-                            </select>
-                        </div>
-                    </section>
-                </aside>
+                
 
                 {/* Product List */}
                 <section className="product-list-right-container">

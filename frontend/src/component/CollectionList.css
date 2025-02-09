@@ -1,0 +1,79 @@
+/* Container styling */
+.collection-container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Title styling */
+.collection-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* 10-Column Responsive Grid */
+.collection-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr); /* 10 equal columns */
+    gap: 10px;
+    justify-content: center;
+}
+
+/* Collection Item */
+.collection-item {
+    padding: 15px;
+    background-color: #f8f9fa;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    text-align: center;
+    min-width: 100px;
+}
+
+.collection-item:hover {
+    background-color: #ff7f50;
+    color: white;
+}
+
+/* Selected Collection */
+.collection-item.selected {
+    border-color: #ff7f50;
+    background-color: #ff7f50;
+    color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .collection-grid {
+        grid-template-columns: repeat(6, 1fr); /* 6 columns for large screens */
+    }
+}
+
+@media (max-width: 992px) {
+    .collection-grid {
+        grid-template-columns: repeat(4, 1fr); /* 4 columns for tablets */
+    }
+}
+
+@media (max-width: 768px) {
+    .collection-grid {
+        grid-template-columns: repeat(3, 1fr); /* 3 columns for smaller tablets */
+    }
+}
+
+@media (max-width: 576px) {
+    .collection-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns for phones */
+    }
+}
+
+@media (max-width: 400px) {
+    .collection-grid {
+        grid-template-columns: repeat(1, 1fr); /* 1 column for extra small screens */
+    }
+}

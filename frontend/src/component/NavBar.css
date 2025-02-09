@@ -1,5 +1,6 @@
 .navbar {
-    background-color: #333;
+    width: 90%;
+    background-color: aliceblue;
     padding: 10px;
     display: flex;
     align-items: center;
@@ -17,6 +18,7 @@
     font-size: 16px;
     border: 1px solid #ddd;
     border-radius: 4px;
+    background-color: #ddd;
   }
   
   .nav-links {
@@ -25,7 +27,7 @@
   }
   
   .nav-link {
-    color: white;
+    color: rgb(203, 193, 193);
     text-decoration: none;
     font-size: 16px;
   }
@@ -35,7 +37,7 @@
   }
   
   .logout-button {
-    background-color: #ff4d4d;
+    
     color: white;
     border: none;
     padding: 8px 12px;
@@ -45,6 +47,6 @@
   }
   
   .logout-button:hover {
-    background-color: #e04444;
+    background-color: #e6d8d8;
   }
   

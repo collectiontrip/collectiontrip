@@ -1,155 +1,158 @@
-/* Container for the entire product details section */
-.product-details-wrapper {
-    margin: 20px;
-    font-family: 'Arial', sans-serif;
-  }
-  
-  .product-details-container {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-    margin: 20px auto;
-    padding: 20px;
-    max-width: 1200px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Container for the product images */
-  .product-images {
-    flex: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-  }
-  
-  .large-image {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-  }
-  
-  .large-image img {
-    width: 100%;
-    max-width: 600px;
-    height: auto;
-    object-fit: cover;
-    border-radius: 8px;
-  }
-  
-  /* Small images below the main image */
-  .small-images {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-  }
-  
-  .small-images img {
-    width: 80px;
-    height: 80px;
-    object-fit: cover;
-    cursor: pointer;
-    border-radius: 8px;
-    transition: transform 0.3s ease-in-out;
-  }
-  
-  .small-images img:hover {
-    transform: scale(1.1);
-  }
-  
-  /* Container for the product details */
-  .product-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-  
-  .product-info h1 {
-    font-size: 28px;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-  
-  .product-info p {
-    font-size: 16px;
-    color: #555;
-  }
-  
-  .product-buttons {
-    display: flex;
-    gap: 15px;
-  }
-  
-  .product-buttons button {
-    padding: 12px 25px;
-    background-color: #ff7f50;
-    border: none;
-    color: white;
-    cursor: pointer;
-    font-size: 16px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-  }
-  
-  .product-buttons button:hover {
-    background-color: #ff6347;
-  }
-  
-  .product-buttons .buy-now {
-    background-color: #28a745;
-  }
-  
-  .product-buttons .buy-now:hover {
-    background-color: #218838;
-  }
-  
-  /* Container for reviews */
-  .product-reviews {
-    margin-top: 40px;
-    padding: 20px;
-    border-top: 1px solid #ddd;
-    width: 100%;
-  }
-  
-  .product-reviews h2 {
-    margin-bottom: 20px;
-    font-size: 24px;
-    font-weight: bold;
-  }
-  
-  .product-reviews ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .product-reviews li {
-    margin-bottom: 15px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 15px;
-  }
-  
-  .product-reviews li p {
-    margin: 5px 0;
-    font-size: 14px;
-    color: #555;
-  }
-  
-  .global-message {
-    background-color: #4caf50;
-    color: white;
-    text-align: center;
-    padding: 10px;
-    margin-bottom: 15px;
-    border-radius: 5px;
-    font-size: 16px;
-    transition: opacity 0.3s ease-out;
-  }
-  
-  .global-message.hide {
-    opacity: 0;
-    pointer-events: none;
-  }
+/* Product Details Layout */
+.product-details-container {
+  display: flex;
+  flex-direction: column;
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+}
+
+/* Product Content (Images + Details) */
+.product-content {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+}
+
+/* Product Images */
+.product-images {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative; /* Ensures consistency */
+}
+
+/* Large Image Container (Fixed Size) */
+.large-image-container {
+  width: 500px; /* Fixed width */
+  height: 500px; /* Fixed height */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  background-color: #f8f9fa; /* Light background */
+  border-radius: 8px;
+}
+
+.large-image-container img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain; /* Ensures the full image is displayed without cropping */
+  border-radius: 8px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.large-image-container:hover img {
+  transform: scale(1.05); /* Slight zoom on hover */
+}
+
+/* Image Controls */
+.image-controls {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  justify-content: center;
+  width: 100%;
+}
+
+/* Image Navigation Buttons */
+.image-controls button {
+  background: #ff7f50;
+  border: none;
+  color: white;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 18px;
+  border-radius: 5px;
+  margin: 0 5px;
+}
+
+.image-controls button:hover {
+  background: #ff6347;
+}
+
+/* Small Thumbnail Images */
+.small-images {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 10px;
+  justify-content: center;
+  width: 100%;
+}
+
+.small-images img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain; /* Ensures full image is visible */
+  cursor: pointer;
+  border-radius: 8px;
+  transition: transform 0.3s;
+}
+
+.small-images img:hover, .small-images img.active {
+  transform: scale(1.1);
+  border: 2px solid #ff7f50;
+}
+
+/* Fullscreen Overlay */
+.fullscreen-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.fullscreen-overlay img {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain; /* Ensures full image is visible */
+}
+
+/* Fullscreen Navigation Buttons */
+.fullscreen-overlay .close-button,
+.fullscreen-overlay .prev-button,
+.fullscreen-overlay .next-button {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.8);
+  border: none;
+  color: black;
+  font-size: 24px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.fullscreen-overlay .close-button {
+  top: 10px;
+  right: 20px;
+}
+
+.fullscreen-overlay .prev-button {
+  left: 20px;
+}
+
+.fullscreen-overlay .next-button {
+  right: 20px;
+}
+
+.fullscreen-overlay button:hover {
+  background: white;
+}
+
+/* Product Buttons (Fixed at Bottom) */
+.product-buttons {
+  display: flex;
+  gap: 15px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding-top: 15px;
+  background: white;
+}

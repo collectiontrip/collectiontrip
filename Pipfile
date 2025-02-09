@@ -17,19 +17,18 @@ redis = "*"
 mysqlclient = "*"
 flower = "*"
 razorpay = "*"
-locust = "*"
 payu = "*"
 django-paypal = "*"
+django = "*"
 paypalrestsdk = "*"
 pytest = "*"
 pytest-django = "*"
 pytest-watch = "*"
 model-bakery = "*"
-django = "*"
-channels = "*"
-daphne = "*"
+locust = "*"
 
 [dev-packages]
+django-silk = "*"
 
 [requires]
 python_version = "3.11"

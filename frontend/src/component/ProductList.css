@@ -6,22 +6,52 @@ body {
     background-color: #f9f9f9;
     color: #333;
     overflow-x: hidden;
+    width: 100%;
+}
+.collection{
+    padding-top: 30px;
+    display: flex;
+    
+}
+
+.toggle-collections-btn{
+    height: 35px;
+    margin-top: 6px;
+    
+    
+}
+
+.header{
+    display: flex;
+}
+
+.filter-sort{
+    display: flex;
 }
 
 .search-container {
+    
     display: flex;
     justify-content: center;
     align-items: center;
     margin-bottom: 20px;
-    gap: 10px; /* Adds space between elements */
+     
+    padding-left: 10px;
+    padding-top: 5px;
 }
 
 .search-container input {
     padding: 8px;
     font-size: 16px;
-    width: 300px;
+    width: 200px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    background-color: rgba(235, 243, 243, 0.329);
+    color: #444;
+}
+
+product-list-header{
+    display: flex;
 }
 
 .search-container button {
@@ -33,6 +63,277 @@ body {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s;
+}
+/* General styles */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #333;
+    overflow-x: hidden;
+    width: 100%;
+}
+
+/* Header Section */
+.product-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 15px;
+    background: #fff;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+/* Collection Section */
+.collection {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.toggle-collections-btn {
+    height: 35px;
+    padding: 8px 12px;
+    border: none;
+    background-color: #3498db;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.toggle-collections-btn:hover {
+    background-color: #2980b9;
+}
+
+/* Search Section */
+.search-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-container input {
+    padding: 8px;
+    font-size: 16px;
+    width: 200px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: rgba(235, 243, 243, 0.329);
+    color: #444;
+}
+
+.search-container button {
+    padding: 8px 15px;
+    font-size: 16px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.search-container button:hover {
+    background-color: #2980b9;
+}
+
+/* Filter & Sorting */
+.filter-sort-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.filter-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.price-filter {
+    display: flex;
+    gap: 10px;
+}
+
+.price-filter input {
+    padding: 8px;
+    width: 100px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.sort-by select {
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Product List Container */
+.product-list-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(4, 1fr);
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Product Item */
+.product-item {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.product-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.product-image {
+    width: 100%;
+    height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f5f5f5;
+}
+
+.product-image img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.product-image:hover img {
+    transform: scale(1.1);
+}
+
+.product-detail {
+    padding: 15px;
+    text-align: center;
+}
+
+.product-detail h3 {
+    font-size: 18px;
+    color: #333;
+    margin: 10px 0;
+}
+
+.product-detail p {
+    font-size: 14px;
+    color: #777;
+    margin: 5px 0;
+}
+
+.product-detail h4 {
+    font-size: 16px;
+    color: #27ae60;
+    font-weight: bold;
+}
+
+/* Pagination */
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.pagination-controls button {
+    padding: 8px 12px;
+    font-size: 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.pagination-controls button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .product-list-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 720px) {
+    .product-list-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Adjust header layout to vertical */
+    .product-list-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+
+    .filter-sort-section {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .collection {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+@media (max-width: 480px) {
+    .product-list-container {
+        grid-template-columns: 1fr;
+    }
+
+    /* Stack search and filter elements vertically */
+    .product-list-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-container {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .search-container input,
+    .search-container button {
+        width: 100%;
+    }
+
+    .filter-sort-section {
+        flex-direction: column;
+    }
+
+    .filter-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .price-filter {
+        flex-direction: column;
+        align-items: stretch;
+    }
 }
 
 .search-container button:hover {
