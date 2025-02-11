@@ -31,7 +31,7 @@ const Navbar = ({ isAuthenticated, setIsAuthenticated }) => {
     setIsAuthenticated(false);
     
     // Redirect to the product page
-    navigate("/product");
+    navigate("/");
   };
 
   return (

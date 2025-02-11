@@ -79,8 +79,8 @@ MIDDLEWARE = [
    
 ]
 
-if DEBUG:
-    MIDDLEWARE += [ 'silk.middleware.SilkyMiddleware',]
+#if DEBUG:
+ #   MIDDLEWARE += [ 'silk.middleware.SilkyMiddleware',]
 
 ROOT_URLCONF = 'collectiontrip.urls'
 CORS_ALLOWED_ORIGINS = [
@@ -208,7 +208,7 @@ ADMINS = [
     ('Mosh', 'admin@ravibuy.com')
 ]
 
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_BROKER_URL = 'redis://localhost:6379/1'
 CELERY_BEAT_SCHEDULE = {
     'notify_customers': {
         'task': 'playground.tasks.notify_customers',
@@ -222,4 +222,14 @@ PAYPAL_CLIENT_ID = 'AZ0Q7_g-iFKRv5HROH8PMIx8viAeJP7GI_1-NkJXHO843GqK9e76gbJiPKAU
 PAYPAL_CLIENT_SECRET = 'EO3MjoesZ1SGfTEjsm7c1dnZzgjnj5XssefHmOhB4unMk8-a5ZXT8MjJuO2V6aP2ydBO_kyi6eYN2KJ1'
 PAYPAL_MODE = 'sandbox' 
 
-APPEND_SLASH = False
+
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/2",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}

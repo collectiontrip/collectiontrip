@@ -166,7 +166,10 @@ const ProductList = () => {
                                 <div className="product-item" key={product.id}>
                                     <div className="product-image">
                                         {product.images?.[0] && (
+                                            <Link to={`/product/${product.id}`}>
+                                                
                                             <img src={product.images[0].image} alt="Product Thumbnail" />
+                                            </Link>
                                         )}
                                     </div>
                                     <div className="product-detail">

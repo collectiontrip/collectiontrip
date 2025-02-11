@@ -26,6 +26,7 @@ pytest-django = "*"
 pytest-watch = "*"
 model-bakery = "*"
 locust = "*"
+django-redis = "*"
 
 [dev-packages]
 django-silk = "*"

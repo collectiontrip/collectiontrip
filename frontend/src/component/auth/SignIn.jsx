@@ -39,7 +39,7 @@ const SignIn = ({ setIsAuthenticated }) => {
                 setIsAuthenticated(true); // Update authentication status
 
                 setTimeout(() => {
-                    navigate('/product');
+                    navigate('/');
                 }, 1500);
             } else {
                 setError('Failed to retrieve tokens.');

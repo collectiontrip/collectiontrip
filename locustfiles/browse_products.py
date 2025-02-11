@@ -60,3 +60,8 @@ class WebsiteUser(HttpUser):
                 print("Error: 'id' not found in response JSON")
         except requests.exceptions.JSONDecodeError:
             print(f"Error: Failed to parse JSON. Response: {response.text}")
+
+
+    @task
+    def say_sello(self):
+        self.client.get('/playground/')

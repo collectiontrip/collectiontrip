@@ -23,7 +23,7 @@ function App() {
       <div>
         <NavBar isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} />
         <Routes>
-          <Route path="/products" element={<ProductList />} />
+          <Route path="/" element={<ProductList />} />
           <Route path="/product/:productId" element={<ProductDetails />} />
           <Route
             path="/carts/:cartId"
