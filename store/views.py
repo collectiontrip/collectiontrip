@@ -122,29 +122,33 @@ class CartItemViewSet(ModelViewSet):
     
 
 
-
 class CustomerViewSet(ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
     permission_classes = [IsAdminUser]
-    
+
     @action(detail=True, permission_classes=[ViewCustomerHistoyPermission])
     def history(self, request, pk):
         return Response('OK')
-    
-    
+
     @action(detail=False, methods=['GET', 'PUT'], permission_classes=[IsAuthenticated])
     def me(self, request):
-        customer = Customer.objects.get(user_id=request.user.id)
+        try:
+            customer = Customer.objects.get(user_id=request.user.id)
+        except Customer.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
         if request.method == 'GET':
             serializer = CustomerSerializer(customer)
             return Response(serializer.data)
         elif request.method == 'PUT':
             serializer = CustomerSerializer(customer, data=request.data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response(serializer.data)
-        
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class AddressViewSet(viewsets.ModelViewSet):
     serializer_class = AddressSerializer

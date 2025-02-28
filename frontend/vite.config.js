@@ -12,5 +12,12 @@ export default defineConfig({
     watch: {
       usePolling: true, // Ensures compatibility with certain environments
     },
+    proxy: {
+      '/media': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
   },
 })

@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import React, { useState, useEffect } from "react";
+import {jwtDecode} from "jwt-decode";
 import AxiosInstance from "./auth/AxiosInstance";
 import Picker from "@emoji-mart/react";
 import "./ChatRoomDetails.css";
@@ -11,8 +12,9 @@ const ChatRoomDetail = () => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [chatPartner, setChatPartner] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
+  const [chatPartner, setChatPartner] = useState("");
+  const [chatPartnerDetails, setChatPartnerDetails] = useState(null);
   const [newMessage, setNewMessage] = useState("");
   const [mediaFile, setMediaFile] = useState(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -44,13 +46,31 @@ const ChatRoomDetail = () => {
 
     const fetchCurrentUser = async () => {
       try {
-        const response = await AxiosInstance.get("/auth/users/");
-        console.log("Fetched User:", response.data);
-        if (response.data.length > 0) {
-          setCurrentUser(response.data[0]);
-        } else {
-          setError("No user found");
+        // Get the access token from localStorage
+        const token = localStorage.getItem("accessToken");
+    
+        if (!token) {
+          setError("No authentication token found");
+          return;
         }
+    
+        // Decode the token to get the user ID
+        const decodedToken = jwtDecode(token);
+        const userId = decodedToken.user_id; // Djoser stores it as `user_id`
+    
+        console.log("Decoded User ID:", userId);
+    
+        if (!userId) {
+          setError("Invalid token, unable to fetch user ID");
+          return;
+        }
+    
+        // Fetch the current user by user ID
+        const response = await AxiosInstance.get(`/auth/users/${userId}/`);
+        console.log("Fetched Current User:", response.data);
+    
+        setCurrentUser(response.data); // Set the correct logged-in user
+    
       } catch (error) {
         console.error("Error fetching user:", error);
         setError("Error fetching user: " + error.message);
@@ -101,6 +121,35 @@ const ChatRoomDetail = () => {
       setChatPartner(otherUser || "Unknown");
     }
   }, [currentUser, messages]);
+
+  useEffect(() => {
+    const fetchChatPartnerDetails = async () => {
+      try {
+        if (!chatPartner || chatPartner === currentUser?.username) return;  // Prevent fetching for current user
+  
+        console.log("Fetching details for:", chatPartner);
+        const response = await AxiosInstance.get("/auth/users/");
+        console.log("All Users from API:", response.data);
+  
+        const partnerData = response.data.find(user => user.username === chatPartner && user.id !== currentUser?.id);
+  
+        if (partnerData) {
+          console.log("Found chat partner details:", partnerData);
+          setChatPartnerDetails(partnerData);
+        } else {
+          console.log("Chat partner not found or is the current user.");
+          setChatPartnerDetails(null);  // No partner found or the user is the current one
+        }
+      } catch (error) {
+        console.error("Error fetching chat partner details:", error);
+      }
+    };
+  
+    if (chatPartner && chatPartner !== currentUser?.username) {
+      fetchChatPartnerDetails();
+    }
+  }, [chatPartner, currentUser]);
+  
 
   const formatTime = (timestamp) => {
     if (!timestamp) return "Unknown Time";
@@ -193,15 +242,7 @@ const ChatRoomDetail = () => {
       console.log("Message Sent:", response.data);
 
       // Send the new message via WebSocket
-      if (socket && socket.readyState === WebSocket.OPEN) {
-        socket.send(
-          JSON.stringify({
-            message: response.data.content,
-            sender_id: currentUser.id, // Use ID instead of username
-            message_type: response.data.message_type, // Ensure message type is included
-          })
-        );
-      }
+      
 
       setMessages([...messages, response.data]);
       setNewMessage("");
@@ -228,7 +269,27 @@ const ChatRoomDetail = () => {
 
   return (
     <div className="chatroom-container">
-      <h1 className="chatroom-title">{chatPartner}</h1>
+      <h1 className="chatroom-title">
+        {chatPartner === "" ? "You" : chatPartner}
+        {chatPartnerDetails && chatPartner !== "" ? (
+          chatPartnerDetails.is_online !== undefined ? (
+            chatPartnerDetails.is_online ? (
+              <span className="online-status">🟢 Online</span>
+            ) : (
+              <span className="last-seen">
+                Last seen:{" "}
+                {chatPartnerDetails.last_seen
+                  ? formatTime(chatPartnerDetails.last_seen)
+                  : "Unavailable"}
+              </span>
+            )
+          ) : (
+            <span></span>
+          )
+        ) : (
+          <span></span>
+        )}
+      </h1>
       <div className="messages-container">
         {messages.length === 0 ? (
           <p className="no-messages">No messages yet</p>

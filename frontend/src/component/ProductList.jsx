@@ -18,6 +18,7 @@ const ProductList = () => {
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState("");
     const [showCollections, setShowCollections] = useState(false);
+    const [globalMessage, setGlobalMessage] = useState('');
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -63,6 +64,11 @@ const ProductList = () => {
         updateQueryParams({ search: searchTerm }, ["collection_id", "price__gt", "price__lt", "ordering", "category"]);
     };
 
+    const handleAddToCartSuccess = (message) => {
+        setGlobalMessage('Product successfully added to cart');
+        setTimeout(() => setGlobalMessage(''), 3000);
+      };
+
     const handleFilterByPrice = () => {
         setCurrentPage(1);
         updateQueryParams({ price__gt: minPrice, price__lt: maxPrice }, ["search", "collection_id", "ordering", "category"]);
@@ -92,8 +98,9 @@ const ProductList = () => {
 
     return (
         <div className="product-list-main-container">
-            
+
                 <header className="product-list-header">
+                    
                     <div className="collection">
                         <button className="toggle-collections-btn" onClick={() => setShowCollections(!showCollections)}>
                             {showCollections ? "Hide Collections" : "Show Collections"}
@@ -155,12 +162,18 @@ const ProductList = () => {
             
 
             <main className="product-list-body-container">
-                {/* Filters and Sorting */}
-                
+            
 
-                {/* Product List */}
+                
                 <section className="product-list-right-container">
+                    <div>
+                        {globalMessage && (
+                            <p className="global-message">{globalMessage}</p>
+                        )}
+                    </div>
                     <div className="product-list-container">
+                    
+                        
                         {products.length > 0 ? (
                             products.map((product) => (
                                 <div className="product-item" key={product.id}>
@@ -178,7 +191,11 @@ const ProductList = () => {
                                         </Link>
                                         <p>{product.description}</p>
                                         <h4>{product.price}$</h4>
-                                        <AddToCart productId={product.id} />
+                                        
+                                        <div className="add-to-cart">
+                                            <AddToCart productId={product.id} onAddSuccess={handleAddToCartSuccess} />
+                                        </div>
+
                                     </div>
                                 </div>
                             ))

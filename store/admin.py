@@ -92,7 +92,7 @@ class CollectionAdmin(admin.ModelAdmin):
 
 @admin.register(models.Customer)
 class CustomerAdmin(admin.ModelAdmin):
-    list_display = ['first_name', 'last_name',  'membership', 'orders', 'image']
+    list_display = ['id', 'first_name', 'last_name',  'membership', 'orders', 'image']
     list_editable = ['membership']
     list_per_page = 10
     list_select_related = ['user']

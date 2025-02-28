@@ -12,6 +12,8 @@ import AddressForm from './component/Address';
 import CollectionList from './component/CollectionList';
 import ChatroomList from './component/ChatRoom';
 import ChatRoomDetail from './component/ChatRoomDetails';
+import Profile from './component/profile';
+import User from './component/user';
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
@@ -34,6 +36,9 @@ function App() {
           <Route path="/user/address" element={<AddressForm onSubmitSuccess={() => console.log("Address submitted!")} />} />
           <Route path="/user/orders" element={<Orders />} />
           <Route path="/collections" element={<CollectionList />} />
+          <Route path="/user" element={<User />} />
+          <Route path="/user/profile" element={<Profile />} />
+
           <Route path="/chatroom" element={<ChatroomList />} />
           <Route path="/chatroom/:chatroom_id" element={<ChatRoomDetail />} /> {/* Added route for ChatRoomDetail */}
         </Routes>

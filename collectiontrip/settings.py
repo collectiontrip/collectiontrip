@@ -195,12 +195,17 @@ SIMPLE_JWT = {
 }
 
 
+
 DJOSER = {
+    
     'SERIALIZERS': {
         'user_create': 'core.serializers.UserCreateSerializer',
+        'user': 'core.serializers.UserSerializer',
         'current_user': 'core.serializers.UserSerializer',
-    }
+        
+    },
 }
+
 
 AUTH_USER_MODEL = 'core.User'
 
@@ -233,3 +238,8 @@ CACHES = {
         }
     }
 }
+
+
+TWILIO_ACCOUNT_SID = "ACaae3e97351f066031fdfc5dc48cdb661"
+TWILIO_AUTH_TOKEN = "2466d63b79c419a15e593f6e7a5b2d13"
+TWILIO_PHONE_NUMBER = "+15733754020"

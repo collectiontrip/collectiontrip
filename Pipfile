@@ -27,6 +27,9 @@ pytest-watch = "*"
 model-bakery = "*"
 locust = "*"
 django-redis = "*"
+twisted = {extras = ["http2", "tls"], version = "*"}
+twilio = "*"
+requests = "*"
 
 [dev-packages]
 django-silk = "*"

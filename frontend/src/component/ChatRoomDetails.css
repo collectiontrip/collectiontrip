@@ -16,6 +16,7 @@
   color: #333;
   margin-bottom: 20px;
   text-align: center;
+  padding-top: 30px;
 }
 
 .messages-container {
@@ -59,6 +60,21 @@
   word-wrap: break-word;
   max-width: 60%;
 }
+.user-status {
+  font-size: 14px;
+  color: #666;
+  margin-top: 5px;
+}
+
+.online-status {
+  color: green;
+  font-weight: bold;
+}
+
+.offline-status {
+  color: red;
+}
+
 
 .sent {
   background-color: #007bff;
