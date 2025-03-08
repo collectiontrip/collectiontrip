@@ -122,16 +122,18 @@ class CartItemViewSet(ModelViewSet):
     
 
 
+
+
+
+
 class CustomerViewSet(ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
     permission_classes = [IsAdminUser]
 
-    @action(detail=True, permission_classes=[ViewCustomerHistoyPermission])
-    def history(self, request, pk):
-        return Response('OK')
+   
 
-    @action(detail=False, methods=['GET', 'PUT'], permission_classes=[IsAuthenticated])
+    @action(detail=False, methods=['GET',  'PATCH'], permission_classes=[IsAuthenticated])
     def me(self, request):
         try:
             customer = Customer.objects.get(user_id=request.user.id)
@@ -141,8 +143,9 @@ class CustomerViewSet(ModelViewSet):
         if request.method == 'GET':
             serializer = CustomerSerializer(customer)
             return Response(serializer.data)
-        elif request.method == 'PUT':
-            serializer = CustomerSerializer(customer, data=request.data)
+        
+        elif request.method == 'PATCH':
+            serializer = CustomerSerializer(customer, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)

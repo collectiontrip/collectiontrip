@@ -1,23 +1,38 @@
-import React, { useEffect } from 'react';
+
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa"
-import './Navbar.css';z
+import AxiosInstance from './auth/AxiosInstance';
+import './NavBar.css';
 
 const Navbar = ({ isAuthenticated, setIsAuthenticated }) => {
   const navigate = useNavigate();
+  const [customer, setCustomer] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    const fetchCustomer = async () => {
+      try {
+        const response = await AxiosInstance.get('store/customers/me');
+        setCustomer(response.data);
+        console.log('Customer fetch successfully' )
+        setLoading(false);
+      } catch (error) {
+        console.error(error);
+        setError(true);
+      }
+    };
+    fetchCustomer();
+  }, []);
 
   useEffect(() => {
     const checkAuth = () => {
       const token = localStorage.getItem("accessToken");
       setIsAuthenticated(!!token);
     };
-
-    // Check authentication on mount
     checkAuth();
-
-    // Listen for changes in local storage
     window.addEventListener("storage", checkAuth);
-
     return () => {
       window.removeEventListener("storage", checkAuth);
     };
@@ -29,21 +44,20 @@ const Navbar = ({ isAuthenticated, setIsAuthenticated }) => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
     setIsAuthenticated(false);
-
     // Redirect to the product page
     navigate("/");
   };
 
- 
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error loading data</div>;
+  if (!customer) return <div>Loading user data...</div>;
 
   return (
     <nav className="navbar">
       <div className="navbar-container">
         <div className="nav-links">
           <Link to="/" className="nav-link">Product</Link>
-          <Link to={`/carts/${localStorage.getItem('cartId') || 'default'}`} className="nav-link">
-            Cart
-          </Link>
+          <Link to={`/carts/${localStorage.getItem('cartId') || 'default'}`} className="nav-link"> Cart </Link>
           {!isAuthenticated ? (
             <>
               <Link to="/user/signin" className="nav-link">Sign In</Link>
@@ -51,9 +65,16 @@ const Navbar = ({ isAuthenticated, setIsAuthenticated }) => {
             </>
           ) : (
             <>
-              <Link to="/user/profile">profile</Link>
+              <Link to="/user/profile">
+                <div className="profile-img">
+                  {customer.image ? (
+                    <img src={customer.image} alt="Profile" />
+                  ) : (
+                    <img src="/media/icon/profile.png" alt="Profile" />
+                  )}
+                </div>
 
-              
+              </Link>
             </>
           )}
           {/* Chat Button */}
@@ -64,7 +85,3 @@ const Navbar = ({ isAuthenticated, setIsAuthenticated }) => {
 };
 
 export default Navbar;
-
-
-
-

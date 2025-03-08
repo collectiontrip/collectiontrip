@@ -1,0 +1,33 @@
+Watching for file changes with StatReloader
+/mnt/c/Users/rdoch/desktop/collectiontrip/playground/views.py changed, reloading.
+Watching for file changes with StatReloader
+Cannot execute silk_profile as silk is not installed correctly.
+Not Found: /
+Not Found: /favicon.ico
+Internal Server Error: /playground/
+Traceback (most recent call last):
+  File "/home/collectiontrip/.local/share/virtualenvs/collectiontrip-GVuWGICO/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/collectiontrip/.local/share/virtualenvs/collectiontrip-GVuWGICO/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/rdoch/desktop/collectiontrip/playground/views.py", line 18, in say_hello
+    return render(request, 'hello.html', {'name': cache.get(key)})
+                                                            ^^^
+NameError: name 'key' is not defined
+/mnt/c/Users/rdoch/desktop/collectiontrip/playground/views.py changed, reloading.
+Watching for file changes with StatReloader
+/mnt/c/Users/rdoch/desktop/collectiontrip/playground/views.py changed, reloading.
+Watching for file changes with StatReloader
+Cannot execute silk_profile as silk is not installed correctly.
+Watching for file changes with StatReloader
+Cannot execute silk_profile as silk is not installed correctly.
+Unauthorized: /auth/jwt/create/
+Unauthorized: /store/collections/
+Forbidden: /store/collections/
+Bad Request: /store/collections/
+Unauthorized: /store/products/
+/mnt/c/Users/rdoch/desktop/collectiontrip/collectiontrip/settings/common.py changed, reloading.
+Watching for file changes with StatReloader
+Cannot execute silk_profile as silk is not installed correctly.

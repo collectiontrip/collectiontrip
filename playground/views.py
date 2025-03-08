@@ -1,11 +1,18 @@
 from django.core.cache import cache
 from django.shortcuts import render
 import requests
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 def say_hello(request):
-   key = 'httpbin_result'
-   if cache.get(key) is None:
-      response = requests.get('https://httpbin.org')
-      data = response.json()
-      cache.set(key, data)
-   return render(request, 'hello.html', {'name': cache.get(key)})
+   def get(self, request):
+      try:
+         logger.info('Calling httpbin')
+         response = requests.get('https://httpbin.org')
+         logger.info('Received the response')
+         data = response.json()
+      except request.ConnectionError:
+         logger.critical('httpbin is offline')
+   return render(request, 'hello.html', {'name': 'Ravi dochania'})

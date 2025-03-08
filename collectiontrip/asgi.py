@@ -11,7 +11,7 @@ from channels.security.websocket import AllowedHostsOriginValidator
 import chat.routing
 from core.middleware import TokenAuthMiddleware
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "collectiontrip.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "collectiontrip.settings.dev")
 
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),

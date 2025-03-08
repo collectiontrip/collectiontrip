@@ -30,6 +30,8 @@ django-redis = "*"
 twisted = {extras = ["http2", "tls"], version = "*"}
 twilio = "*"
 requests = "*"
+whitenoise = "*"
+gunicorn = "*"
 
 [dev-packages]
 django-silk = "*"

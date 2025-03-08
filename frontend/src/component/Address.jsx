@@ -1,160 +1,103 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AxiosInstance from './auth/AxiosInstance';
 import './Address.css';
 
-const AddressForm = ({ addressId, onSubmitSuccess }) => {
-  const [address, setAddress] = useState({
-    street: '',
-    city: '',
-    state: '',
-    postal_code: '',
-    country: '',
-    is_billing_address: false,
-    is_shipping_address: false,
-  });
-  const [loading, setLoading] = useState(false);
+const AddressList = () => {
+  const [addresses, setAddresses] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
-
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (addressId) {
-      const fetchAddress = async () => {
-        try {
-          const response = await AxiosInstance.get(`/addresses/${addressId}/`);
-          setAddress(response.data);
-        } catch (err) {
-          setError('Failed to fetch address data.');
-          console.error('Error fetching address:', err);
-        }
-      };
-      fetchAddress();
-    }
-  }, [addressId]);
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setAddress((prevAddress) => ({
-      ...prevAddress,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    setSuccessMessage(null);
-
-    try {
-      if (addressId) {
-        await AxiosInstance.put(`/addresses/${addressId}/`, address);
-      } else {
-        await AxiosInstance.post('/addresses/', address);
+    const fetchAddresses = async () => {
+      try {
+        const response = await AxiosInstance.get('store/addresses/');
+        setAddresses(response.data);
+      } catch (err) {
+        setError('Failed to fetch addresses.');
+        console.error('Error fetching addresses:', err);
+      } finally {
+        setLoading(false);
       }
+    };
+    fetchAddresses();
+  }, []);
 
-      setSuccessMessage('Address successfully saved!');
-      setTimeout(() => navigate('/product'), 2000);
-      if (onSubmitSuccess) onSubmitSuccess();
+  useEffect(() => {
+    const defaultAddressId = localStorage.getItem('defaultAddressId');
+    if (defaultAddressId) {
+      setAddresses((prevAddresses) => prevAddresses.map((address) => ({
+        ...address,
+        default_address: address.id === parseInt(defaultAddressId),
+      })));
+    }
+  }, [addresses]);
+
+  const handleSetDefaultAddress = async (id) => {
+    try {
+      await AxiosInstance.patch(`store/addresses/${id}/`, { default_address: true });
+      localStorage.setItem('defaultAddressId', id);
+      setAddresses((prevAddresses) => prevAddresses.map((address) => ({
+        ...address,
+        default_address: address.id === id,
+      })));
     } catch (err) {
-      setError('Failed to save address.');
-      console.error('Error saving address:', err);
-    } finally {
-      setLoading(false);
+      console.error('Error setting default address:', err);
+      setError('Failed to set default address.');
     }
   };
 
   return (
-    <div className="address-form-container">
-      <h2>{addressId ? 'Edit Address' : 'Add Address'}</h2>
+    <div className="address-list-container">
+      <h2 className="address-list-title">My Addresses</h2>
+      <button className="add-new-address" onClick={() => navigate('/user/address/new')}>
+        + Add New Address
+      </button>
+
+      {loading && <p className="loading">Loading addresses...</p>}
       {error && <p className="error">{error}</p>}
-      {successMessage && <p className="success">{successMessage}</p>}
-      <form onSubmit={handleSubmit} className="address-form">
-        <div className="input-container">
-          <label htmlFor="street">Street:</label>
-          <input
-            type="text"
-            id="street"
-            name="street"
-            value={address.street}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="input-container">
-          <label htmlFor="city">City:</label>
-          <input
-            type="text"
-            id="city"
-            name="city"
-            value={address.city}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="input-container">
-          <label htmlFor="state">State:</label>
-          <input
-            type="text"
-            id="state"
-            name="state"
-            value={address.state}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="input-container">
-          <label htmlFor="postal_code">Postal Code:</label>
-          <input
-            type="text"
-            id="postal_code"
-            name="postal_code"
-            value={address.postal_code}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="input-container">
-          <label htmlFor="country">Country:</label>
-          <input
-            type="text"
-            id="country"
-            name="country"
-            value={address.country}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="checkbox-container">
-          <label>
-            <input
-              type="checkbox"
-              name="is_billing_address"
-              checked={address.is_billing_address}
-              onChange={handleChange}
-            />
-            Billing Address
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              name="is_shipping_address"
-              checked={address.is_shipping_address}
-              onChange={handleChange}
-            />
-            Shipping Address
-          </label>
-        </div>
-        <div className="button-container">
-          <button type="submit" disabled={loading}>
-            {loading ? 'Saving...' : 'Save Address'}
-          </button>
-        </div>
-      </form>
+      {!loading && addresses.length === 0 && <p className="no-address">No addresses found.</p>}
+
+      <div className="address-grid">
+        {addresses.map((address) => (
+          <div key={address.id} className="address-card">
+            <div className="address-details">
+              <p><strong>Street:</strong> {address.street}</p>
+              <div className="grid-container">
+                <p><strong>City:</strong> {address.city}</p>
+                <p><strong>State:</strong> {address.state}</p>
+                <p><strong>Postal Code:</strong> {address.postal_code}</p>
+                <p><strong>Country:</strong> {address.country}</p>
+              </div>
+            <div className="address-actions">
+                <div className="address-status">
+                    <p><strong>Billing Address:</strong> {address.is_billing_address ? 'Yes' : 'No'}</p>
+                </div>
+                <div className="address-status">
+                    <p><strong>Billing Address:</strong> {address.is_billing_address ? 'Yes' : 'No'}</p>
+                </div>
+                <div className="default-checkbox-container">
+                    <label className="default-checkbox">
+                    <input type="checkbox" checked={address.default_address} onChange={() => handleSetDefaultAddress(address.id)} />
+                    Set as Default
+                    </label>
+                </div>
+            </div>
+
+            </div>
+            <div className="button-container">
+              <button className="edit-button" onClick={() => navigate('/user/address/update')}>
+                Edit
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
 
-export default AddressForm;
+export default AddressList;
+
