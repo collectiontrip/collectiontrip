@@ -5,7 +5,6 @@ from .common import BASE_DIR
 
 DEBUG = False
 SECRET_KEY = os.environ['SECRET_KEY']
-#9^!)q2#9bj&x8ya1_597*x+&v#n(xd7phvk5x#ul&8oa#ic_x$
 
 ALLOWED_HOSTS = [os.environ['WEBSITE_HOSTNAME']]
 CSRF_TRUSTED_ORIGINS = ['https://'+os.environ['WEBSITE_HOSTNAME']]
