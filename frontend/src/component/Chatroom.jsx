@@ -3,7 +3,7 @@ import AxiosInstance from './auth/AxiosInstance';
 import { Link } from 'react-router-dom';
 import './ChatRoom.css';
 
-const ChatroomList = () => {
+const ChatRoom = () => {
   const [chatrooms, setChatrooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -57,4 +57,4 @@ const ChatroomList = () => {
   );
 };
 
-export default ChatroomList;
+export default ChatRoom;

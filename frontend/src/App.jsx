@@ -11,7 +11,7 @@ import AddressList from './component/Address';
 import AddNewAddress from './component/AddNewAddress';
 import AddressForm from './component/AddressUpdate';
 import CollectionList from './component/CollectionList';
-import ChatroomList from './component/ChatRoom';
+import ChatRoom from './component/ChatRoom';
 import ChatRoomDetail from './component/ChatRoomDetails';
 import Profile from './component/profile';
 import User from './component/user';
