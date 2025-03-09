@@ -1,20 +1,22 @@
 from .common import *
 
-
 DEBUG = True
 
-SECRET_KEY = 'django-insecure-0%&w+sj6pcw=6a%fh^$pt1_kw(pj1!e^at9=$40-#0-^os+o@1'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'collectiontrip3',
-        'USER': 'root',
-        'HOST': '127.0.0.1',
-        'PASSWORD': 'Ravidoc1@1$',
-        'PORT': '3306',
-        'OPTIONS': {
-            'charset': 'utf8mb4',
-        },
+        'NAME': os.environ.get('DATABASE_NAME'),
+        'USER': os.environ.get('DATABASE_USER'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
+        'HOST': os.environ.get('DATABASE_HOST'),
+        'PORT': os.environ.get('DATABASE_PORT'),
     }
 }
+
+TWILIO_ACCOUNT_SID = os.environ.get('TWILIO_ACCOUNT_SID')
+TWILIO_AUTH_TOKEN = os.environ.get('TWILIO_AUTH_TOKEN')
+TWILIO_PHONE_NUMBER = os.environ.get('TWILIO_PHONE_NUMBER')
+
+
