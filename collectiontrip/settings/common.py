@@ -204,9 +204,7 @@ DJOSER = {
 
 AUTH_USER_MODEL = 'core.User'
 
-ADMINS = [
-    ('Mosh', 'admin@ravibuy.com')
-]
+
 
 CELERY_BROKER_URL = 'redis://localhost:6379/1'
 CELERY_BEAT_SCHEDULE = {
