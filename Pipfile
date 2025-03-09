@@ -32,6 +32,8 @@ twilio = "*"
 requests = "*"
 whitenoise = "*"
 gunicorn = "*"
+dj-database-url = "*"
+django-silk = "*"
 
 [dev-packages]
 django-silk = "*"
